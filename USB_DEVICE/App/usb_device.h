@@ -32,7 +32,8 @@
 #include "usbd_def.h"
 
 /* USER CODE BEGIN INCLUDE */
-
+#include <midi_keyboard.h>
+#include <deque>
 /* USER CODE END INCLUDE */
 
 /** @addtogroup USBD_OTG_DRIVER

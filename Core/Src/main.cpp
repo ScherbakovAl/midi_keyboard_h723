@@ -70,12 +70,11 @@ int main(void) {
 	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 	LCD_Test();
 
-	GPIOE->BSRR = 0x8;
+	GPIOA->BSRR = 0x100000;
 	HAL_Delay(800);
-	GPIOE->BSRR = 0x8;
-	HAL_Delay(800);
-//	keys.wheel();
-
+	GPIOA->BSRR = 0x200000;
+	HAL_Delay(100);
+	keys.wheel();
 
 	uint8_t texxt[20];
 	int a = 0;
@@ -92,24 +91,21 @@ int main(void) {
 		int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
 		currCounter = 32767 - ((currCounter - 1) & 0xFFFF) / 2;
 		if (currCounter != prevCounter) {
-			char buff[16];
-			snprintf(buff, sizeof(buff), "%06d", currCounter);
-
+			std::string u = std::to_string(currCounter);
+//			snprintf(buff, sizeof(buff), "%06d", currCounter);
 			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,
 					ST7735Ctx.Height, BLACK);
 //	    	sprintf(texxt, "%d", currCounter);
 			//printf(buff, "1. целое число: %d \n", 1234);
 			//printf(buff, "2. дробное число: %f \n", 12.34);
 			//printf(buff, "3. 16-ричное: %X \n", 12.34);
-			LCD_ShowString(currCounter, 11, 150, 40, 16, texxt);
-			HAL_Delay(100);
-
+			LCD_ShowString(0, 40, 150, 40, 16, (uint8_t*) u.c_str());
 			prevCounter = currCounter;
 		}
 		if (TIM2->CNT - tim_t > 1000000) {
 			tim_t = TIM2->CNT;
 			std::string s = std::to_string(a);
-			LCD_ShowString(1, 11, 150, 40, 16, (uint8_t*) s.c_str());
+			LCD_ShowString(0, 10, 150, 40, 16, (uint8_t*) s.c_str());
 			++a;
 		}
 

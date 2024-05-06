@@ -79,7 +79,7 @@ int main(void) {
 	uint8_t texxt[20];
 	int a = 0;
 	int tim_t = TIM2->CNT;
-	int32_t prevCounter = 0;
+	int prevCounter = 0;
 	int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,
 			ST7735Ctx.Height, BLACK);
@@ -88,17 +88,11 @@ int main(void) {
 	HAL_Delay(100);
 
 	while (1) {
-		int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
-		currCounter = 32767 - ((currCounter - 1) & 0xFFFF) / 2;
+		currCounter = __HAL_TIM_GET_COUNTER(&htim3) / 2;
 		if (currCounter != prevCounter) {
 			std::string u = std::to_string(currCounter);
-//			snprintf(buff, sizeof(buff), "%06d", currCounter);
 			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,
 					ST7735Ctx.Height, BLACK);
-//	    	sprintf(texxt, "%d", currCounter);
-			//printf(buff, "1. целое число: %d \n", 1234);
-			//printf(buff, "2. дробное число: %f \n", 12.34);
-			//printf(buff, "3. 16-ричное: %X \n", 12.34);
 			LCD_ShowString(0, 40, 150, 40, 16, (uint8_t*) u.c_str());
 			prevCounter = currCounter;
 		}

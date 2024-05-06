@@ -25,7 +25,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "board.h"
 #include "lcd.h"
 /* USER CODE END Includes */
 
@@ -103,9 +102,6 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-
-//	board_button_init();
-//	board_led_init();
 
 	LCD_Test();
 

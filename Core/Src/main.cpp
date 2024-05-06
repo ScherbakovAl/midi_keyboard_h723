@@ -1,20 +1,20 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2024 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2024 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 
 #include "main.h"
 #include "spi.h"
@@ -55,22 +55,20 @@ cuint interrupt9 = 9;
 cuint interrupt10 = 10;
 Keys keys;
 
-
-int main(void)
-{
-  SCB_EnableICache();
-  SCB_EnableDCache();
-  HAL_Init();
-  SystemClock_Config();
-  MX_GPIO_Init();
-  MX_SPI4_Init();
-  MX_TIM1_Init();
-  MX_TIM3_Init();
-  MX_USB_DEVICE_Init();
-  MX_TIM2_Init();
-  HAL_TIM_Base_Start(&htim2);
-  HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-  keys.wheel();
+int main(void) {
+	SCB_EnableICache();
+	SCB_EnableDCache();
+	HAL_Init();
+	SystemClock_Config();
+	MX_GPIO_Init();
+	MX_SPI4_Init();
+	MX_TIM1_Init();
+	MX_TIM3_Init();
+	MX_USB_DEVICE_Init();
+	MX_TIM2_Init();
+	HAL_TIM_Base_Start(&htim2);
+	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
+	keys.wheel();
 
 	LCD_Test();
 
@@ -78,91 +76,85 @@ int main(void)
 	int a = 0;
 	int tim_t = TIM2->CNT;
 	int32_t prevCounter = 0;
-    int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
+	int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,
+			ST7735Ctx.Height, BLACK);
 //	sprintf(texxt, "%d", a);
 	LCD_ShowString(1, 11, 150, 40, 16, texxt);
 	HAL_Delay(100);
 
-  while (1)
-  {
-	    int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
-	    currCounter = 32767 - ((currCounter-1) & 0xFFFF) / 2;
-	    if(currCounter != prevCounter) {
-	        char buff[16];
-	        snprintf(buff, sizeof(buff), "%06d", currCounter);
+	while (1) {
+		int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
+		currCounter = 32767 - ((currCounter - 1) & 0xFFFF) / 2;
+		if (currCounter != prevCounter) {
+			char buff[16];
+			snprintf(buff, sizeof(buff), "%06d", currCounter);
 
-	    	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
+			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,
+					ST7735Ctx.Height, BLACK);
 //	    	sprintf(texxt, "%d", currCounter);
 			//printf(buff, "1. целое число: %d \n", 1234);
 			//printf(buff, "2. дробное число: %f \n", 12.34);
 			//printf(buff, "3. 16-ричное: %X \n", 12.34);
-	    	LCD_ShowString(currCounter, 11, 150, 40, 16, texxt);
-	    	HAL_Delay(100);
+			LCD_ShowString(currCounter, 11, 150, 40, 16, texxt);
+			HAL_Delay(100);
 
-	        prevCounter = currCounter;
-	    }
-	    if(TIM2->CNT - tim_t > 1000000)
-	    {
-	    	tim_t = TIM2->CNT;
-	    	std::string s = std::to_string(a);
-	    	LCD_ShowString(1, 11, 150, 40, 16, (uint8_t*)s.c_str());
-	    	++a;
-	    }
+			prevCounter = currCounter;
+		}
+		if (TIM2->CNT - tim_t > 1000000) {
+			tim_t = TIM2->CNT;
+			std::string s = std::to_string(a);
+			LCD_ShowString(1, 11, 150, 40, 16, (uint8_t*) s.c_str());
+			++a;
+		}
 
-
-
-  }
+	}
 
 }
 
-void SystemClock_Config(void)
-{
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+void SystemClock_Config(void) {
+	RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
+	RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
 
-  HAL_PWREx_ConfigSupply(PWR_LDO_SUPPLY);  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE0);
+	HAL_PWREx_ConfigSupply(PWR_LDO_SUPPLY);
+	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE0);
 
-  while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
+	while (!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {
+	}
 
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 2;
-  RCC_OscInitStruct.PLL.PLLN = 44;
-  RCC_OscInitStruct.PLL.PLLP = 1;
-  RCC_OscInitStruct.PLL.PLLQ = 5;
-  RCC_OscInitStruct.PLL.PLLR = 2;
-  RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
-  RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
-  RCC_OscInitStruct.PLL.PLLFRACN = 0;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
+	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48
+			| RCC_OSCILLATORTYPE_HSE;
+	RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+	RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
+	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+	RCC_OscInitStruct.PLL.PLLM = 2;
+	RCC_OscInitStruct.PLL.PLLN = 44;
+	RCC_OscInitStruct.PLL.PLLP = 1;
+	RCC_OscInitStruct.PLL.PLLQ = 5;
+	RCC_OscInitStruct.PLL.PLLR = 2;
+	RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1VCIRANGE_3;
+	RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1VCOWIDE;
+	RCC_OscInitStruct.PLL.PLLFRACN = 0;
+	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+		Error_Handler();
+	}
 
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2
-                              |RCC_CLOCKTYPE_D3PCLK1|RCC_CLOCKTYPE_D1PCLK1;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;
-  RCC_ClkInitStruct.APB3CLKDivider = RCC_APB3_DIV2;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV2;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;
-  RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV2;
+	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2 | RCC_CLOCKTYPE_D3PCLK1
+			| RCC_CLOCKTYPE_D1PCLK1;
+	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+	RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;
+	RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV2;
+	RCC_ClkInitStruct.APB3CLKDivider = RCC_APB3_DIV2;
+	RCC_ClkInitStruct.APB1CLKDivider = RCC_APB1_DIV2;
+	RCC_ClkInitStruct.APB2CLKDivider = RCC_APB2_DIV2;
+	RCC_ClkInitStruct.APB4CLKDivider = RCC_APB4_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
-  {
-    Error_Handler();
-  }
+	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK) {
+		Error_Handler();
+	}
 }
-
-
-
-
 
 //===============================================================================================================================================
 // extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C"
@@ -227,19 +219,10 @@ void OTG_FS_IRQHandler(void) {
 // extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C"
 //===============================================================================================================================================
 
-
-
-
-
-
-
-
-void Error_Handler(void)
-{
-  __disable_irq();
-  while (1)
-  {
-  }
+void Error_Handler(void) {
+	__disable_irq();
+	while (1) {
+	}
 }
 
 #ifdef  USE_FULL_ASSERT

@@ -173,11 +173,9 @@ void Keys::check() {
 	if (!dequeNotes.empty()) {
 		MidiSender(dequeNotes, bufNotes);
 	}
-	if(!led.empty())
-	{
+	if (!led.empty()) {
 		auto &l = led.front();
-		if(TIM2->CNT - l > 200'000)
-		{
+		if (TIM2->CNT - l > 200'000) {
 			GPIOE->BSRR = 0x80000;
 			led.pop_front();
 		}

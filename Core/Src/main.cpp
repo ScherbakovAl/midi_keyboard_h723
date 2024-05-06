@@ -81,9 +81,7 @@ int main(void) {
 	int tim_t = TIM2->CNT;
 	int prevCounter = 0;
 	int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,
-			ST7735Ctx.Height, BLACK);
-//	sprintf(texxt, "%d", a);
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width, ST7735Ctx.Height, BLACK);
 	LCD_ShowString(1, 11, 150, 40, 16, texxt);
 	HAL_Delay(100);
 

@@ -88,6 +88,32 @@ void MX_USB_DEVICE_Init(void)
   /* USER CODE BEGIN USB_DEVICE_Init_PostTreatment */
   HAL_PWREx_EnableUSBVoltageDetector();
 
+	GPIOE->BSRR = 0x8;
+
+	uint8_t txbuf[8]; //start midi mini test
+//on
+	txbuf[0] = 9; //??
+	txbuf[1] = 144; //0x90(144) - note on, 0x80(128) - note off //0xB0 - Control Change (for hi-res midi) | channel
+	txbuf[2] = 55; //note	// 88 (for hi-res midi)
+	txbuf[3] = 60; //vel	// velocity xx.75 (for hi-res midi)
+
+//off
+	txbuf[4] = 9; //0x09	//??
+	txbuf[5] = 128; //0x90(144) - note on, 0x80(128) - note off | channel
+	txbuf[6] = 55; //note
+	txbuf[7] = 120; //vel	//velocity 86.xx (for hi-res midi)
+
+	HAL_Delay(800);
+
+	CDC_Transmit_HS(txbuf, 8);
+	HAL_Delay(100);
+	CDC_Transmit_HS(txbuf, 8);
+
+	GPIOE->BSRR = 0x80000;
+
+
+
+
   /* USER CODE END USB_DEVICE_Init_PostTreatment */
 }
 

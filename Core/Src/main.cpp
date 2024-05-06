@@ -68,9 +68,14 @@ int main(void) {
 	MX_TIM2_Init();
 	HAL_TIM_Base_Start(&htim2);
 	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-	keys.wheel();
-
 	LCD_Test();
+
+	GPIOE->BSRR = 0x8;
+	HAL_Delay(800);
+	GPIOE->BSRR = 0x8;
+	HAL_Delay(800);
+//	keys.wheel();
+
 
 	uint8_t texxt[20];
 	int a = 0;

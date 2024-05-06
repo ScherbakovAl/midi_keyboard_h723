@@ -89,14 +89,15 @@ void LCD_Test(void)
 			c *= -1;
 		}
 		a += c;
-		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
+		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, GRAY);
 
 		sprintf(texxt, "%d", a);
-		LCD_ShowString(a, a / 2 + 10, 40, 40, 16, texxt);
+		LCD_ShowString(a, a / 2 + 20, 40, 40, 16, texxt);
+		LCD_ShowString(a + 20, a / 2, 40, 40, 16, texxt);
 		//printf(buff, "1. целое число: %d \n", 1234);
 		//printf(buff, "2. дробное число: %f \n", 12.34);
 		//printf(buff, "3. 16-ричное: %X \n", 12.34);
-//		HAL_Delay(20);
+		HAL_Delay(2);
 		if(a == 70) return;
 	}
 }

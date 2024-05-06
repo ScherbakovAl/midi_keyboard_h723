@@ -25,7 +25,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "board.h"
+#include "lcd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -101,6 +102,25 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
+  HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
+
+//	board_button_init();
+//	board_led_init();
+
+	LCD_Test();
+
+	char texxt[20];
+	int a = 125;
+	int32_t prevCounter = 0;
+    int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
+	sprintf(texxt, "%d", a);
+	LCD_ShowString(1, 11, 150, 40, 16, texxt);
+	HAL_Delay(100);
+
+
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -110,6 +130,26 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+	    int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
+	    currCounter = 32767 - ((currCounter-1) & 0xFFFF) / 2;
+	    if(currCounter != prevCounter) {
+	        char buff[16];
+	        snprintf(buff, sizeof(buff), "%06d", currCounter);
+
+	    	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
+	    	sprintf(texxt, "%d", currCounter);
+			//printf(buff, "1. целое число: %d \n", 1234);
+			//printf(buff, "2. дробное число: %f \n", 12.34);
+			//printf(buff, "3. 16-ричное: %X \n", 12.34);
+	    	LCD_ShowString(currCounter, 11, 150, 40, 16, texxt);
+	    	HAL_Delay(100);
+
+	        prevCounter = currCounter;
+	    }
+
+
+
   }
   /* USER CODE END 3 */
 }

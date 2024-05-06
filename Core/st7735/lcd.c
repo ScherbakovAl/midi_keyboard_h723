@@ -84,7 +84,7 @@ void LCD_Test(void)
 	int c = 1;
 	while (1)
 	{
-		if(a <= 0 || a >= 100)
+		if(a <= 0 || a >= 80)
 		{
 			c *= -1;
 		}
@@ -97,7 +97,7 @@ void LCD_Test(void)
 		//printf(buff, "2. дробное число: %f \n", 12.34);
 		//printf(buff, "3. 16-ричное: %X \n", 12.34);
 		HAL_Delay(20);
-		if(a == 99) return;
+		if(a == 70) return;
 	}
 }
 

@@ -96,7 +96,7 @@ void LCD_Test(void)
 		//printf(buff, "1. целое число: %d \n", 1234);
 		//printf(buff, "2. дробное число: %f \n", 12.34);
 		//printf(buff, "3. 16-ричное: %X \n", 12.34);
-		HAL_Delay(20);
+//		HAL_Delay(20);
 		if(a == 70) return;
 	}
 }

@@ -100,13 +100,14 @@ int main(void)
   MX_USB_DEVICE_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_TIM_Base_Start(&htim2);
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 
 	LCD_Test();
 
 	char texxt[20];
-	int a = 125;
+	int a = 0;
+	int tim_t = TIM2->CNT;
 	int32_t prevCounter = 0;
     int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
@@ -142,6 +143,13 @@ int main(void)
 	    	HAL_Delay(100);
 
 	        prevCounter = currCounter;
+	    }
+	    if(TIM2->CNT - tim_t > 1000000)
+	    {
+	    	tim_t = TIM2->CNT;
+	    	sprintf(texxt, "%d", a);
+	    	LCD_ShowString(1, 11, 150, 40, 16, texxt);
+	    	++a;
 	    }
 
 

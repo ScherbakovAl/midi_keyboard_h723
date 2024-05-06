@@ -27,7 +27,37 @@
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN Includes */
+USBD_HandleTypeDef hUsbDeviceFS;
+USBD_CDC_HandleTypeDef *hcdcdc;
 
+void MidiSender(std::deque<Note> &deqNote, uint8_t *buf) {
+	if (hcdcdc->TxState == 0) { //(0==свободно, !0==занято)
+		int s = 0;
+		int i = deqNote.size() * 8;
+		if (i > 512) {
+			deqNote.resize(64);
+			i = 512;
+		}
+		for (auto &n : deqNote) {
+			buf[s] = 9; // ??
+			buf[s + 1] = 176; // 176 (for hi-res midi)
+			buf[s + 2] = 88; // 88 (for hi-res midi)
+			buf[s + 3] = n.lo; // velocity xx.75
+
+			buf[s + 4] = 9; // ?
+			buf[s + 5] = uint8_t(n.mO); // 0x90(144) - note on, 0x80(128) - note off
+			buf[s + 6] = n.note; // number note
+			buf[s + 7] = n.hi; // velocity 86.xx
+
+			s += 8;
+		}
+
+		deqNote.clear();
+
+		USBD_CDC_SetTxBuffer(&hUsbDeviceFS, buf, i);
+		USBD_CDC_TransmitPacket(&hUsbDeviceFS);
+	}
+}
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN PV */
@@ -110,6 +140,9 @@ void MX_USB_DEVICE_Init(void)
 	CDC_Transmit_HS(txbuf, 8);
 
 	GPIOE->BSRR = 0x80000;
+
+	hcdcdc = (USBD_CDC_HandleTypeDef*) hUsbDeviceFS.pClassData; // свободно для отправки? "if (hcdcdc->TxState == ...)"; (0==свободно, !0==занято)
+	}
 
 
 

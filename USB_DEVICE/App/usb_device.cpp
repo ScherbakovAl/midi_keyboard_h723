@@ -28,7 +28,7 @@
 
 /* USER CODE BEGIN Includes */
 
-USBD_HandleTypeDef hUsbDeviceFS;
+USBD_HandleTypeDef hUsbDeviceHS;
 USBD_CDC_HandleTypeDef *hcdcdc;
 
 void MidiSender(std::deque<Note> &deqNote, uint8_t *buf) {
@@ -55,8 +55,8 @@ void MidiSender(std::deque<Note> &deqNote, uint8_t *buf) {
 
 		deqNote.clear();
 
-		USBD_CDC_SetTxBuffer(&hUsbDeviceFS, buf, i);
-		USBD_CDC_TransmitPacket(&hUsbDeviceFS);
+		USBD_CDC_SetTxBuffer(&hUsbDeviceHS, buf, i);
+		USBD_CDC_TransmitPacket(&hUsbDeviceHS);
 	}
 }
 
@@ -73,7 +73,6 @@ void MidiSender(std::deque<Note> &deqNote, uint8_t *buf) {
 /* USER CODE END PFP */
 
 /* USB Device Core handle declaration. */
-USBD_HandleTypeDef hUsbDeviceHS;
 
 /*
  * -- Insert your variables declaration here --
@@ -143,7 +142,7 @@ void MX_USB_DEVICE_Init(void)
 
 	GPIOE->BSRR = 0x80000;
 
-	hcdcdc = (USBD_CDC_HandleTypeDef*) hUsbDeviceFS.pClassData; // свободно для отправки? "if (hcdcdc->TxState == ...)"; (0==свободно, !0==занято)
+	hcdcdc = (USBD_CDC_HandleTypeDef*) hUsbDeviceHS.pClassData; // свободно для отправки? "if (hcdcdc->TxState == ...)"; (0==свободно, !0==занято)
 	}
 
 

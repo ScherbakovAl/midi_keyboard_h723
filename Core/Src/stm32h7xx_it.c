@@ -304,6 +304,7 @@ void EXTI15_10_IRQHandler(void)
 /**
   * @brief This function handles USB On The Go HS global interrupt.
   */
+#endif
 void OTG_HS_IRQHandler(void)
 {
   /* USER CODE BEGIN OTG_HS_IRQn 0 */
@@ -314,7 +315,7 @@ void OTG_HS_IRQHandler(void)
 
   /* USER CODE END OTG_HS_IRQn 1 */
 }
-#endif
+
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */

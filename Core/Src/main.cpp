@@ -15,95 +15,62 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
-/* Includes ------------------------------------------------------------------*/
+
 #include "main.h"
 #include "spi.h"
 #include "tim.h"
 #include "usb_device.h"
 #include "gpio.h"
 #include "string"
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
+#include <midi_keyboard.h>
+
 extern "C" {
 #include "lcd.h"
 }
-/* USER CODE END Includes */
 
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
-
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-/* USER CODE BEGIN PFP */
 
-/* USER CODE END PFP */
+cuint extpr0 = 1;
+cuint extpr1 = 2;
+cuint extpr2 = 4;
+cuint extpr3 = 8;
+cuint extpr4 = 16;
+cuint extpr5 = 32;
+cuint extpr6 = 64;
+cuint extpr7 = 128;
+cuint extpr8 = 256;
+cuint extpr9 = 512;
+cuint extpr10 = 1024;
 
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
+cuint interrupt0 = 0;
+cuint interrupt1 = 1;
+cuint interrupt2 = 2;
+cuint interrupt3 = 3;
+cuint interrupt4 = 4;
+cuint interrupt5 = 5;
+cuint interrupt6 = 6;
+cuint interrupt7 = 7;
+cuint interrupt8 = 8;
+cuint interrupt9 = 9;
+cuint interrupt10 = 10;
+Keys keys;
 
-/* USER CODE END 0 */
 
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
-  /* Enable I-Cache---------------------------------------------------------*/
   SCB_EnableICache();
-
-  /* Enable D-Cache---------------------------------------------------------*/
   SCB_EnableDCache();
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_SPI4_Init();
   MX_TIM1_Init();
   MX_TIM3_Init();
   MX_USB_DEVICE_Init();
   MX_TIM2_Init();
-  /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim2);
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
+  keys.wheel();
 
 	LCD_Test();
 
@@ -117,19 +84,8 @@ int main(void)
 	LCD_ShowString(1, 11, 150, 40, 16, texxt);
 	HAL_Delay(100);
 
-
-
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-
 	    int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
 	    currCounter = 32767 - ((currCounter-1) & 0xFFFF) / 2;
 	    if(currCounter != prevCounter) {
@@ -157,30 +113,18 @@ int main(void)
 
 
   }
-  /* USER CODE END 3 */
+
 }
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  /** Supply configuration update enable
-  */
-  HAL_PWREx_ConfigSupply(PWR_LDO_SUPPLY);
-
-  /** Configure the main internal regulator output voltage
-  */
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE0);
+  HAL_PWREx_ConfigSupply(PWR_LDO_SUPPLY);  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE0);
 
   while(!__HAL_PWR_GET_FLAG(PWR_FLAG_VOSRDY)) {}
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
@@ -199,8 +143,6 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 
-  /** Initializes the CPU, AHB and APB buses clocks
-  */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2
                               |RCC_CLOCKTYPE_D3PCLK1|RCC_CLOCKTYPE_D1PCLK1;
@@ -218,23 +160,86 @@ void SystemClock_Config(void)
   }
 }
 
-/* USER CODE BEGIN 4 */
 
-/* USER CODE END 4 */
 
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
+
+
+//===============================================================================================================================================
+// extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C"
+extern "C" {
+void EXTI0_IRQHandler(void) {
+	EXTI->PR1 = extpr0;
+	keys.interrupt(interrupt0);
+}
+void EXTI1_IRQHandler(void) {
+	EXTI->PR1 = extpr1;
+	keys.interrupt(interrupt1);
+}
+void EXTI2_IRQHandler(void) {
+	EXTI->PR1 = extpr2;
+	keys.interrupt(interrupt2);
+}
+void EXTI3_IRQHandler(void) {
+	EXTI->PR1 = extpr3;
+	keys.interrupt(interrupt3);
+}
+void EXTI4_IRQHandler(void) {
+	EXTI->PR1 = extpr4;
+	keys.interrupt(interrupt4);
+}
+void EXTI9_5_IRQHandler(void) {
+	if ((EXTI->PR1 & EXTI_PR1_PR5) == EXTI_PR1_PR5) {
+		EXTI->PR1 = extpr5;
+		keys.interrupt(interrupt5);
+	}
+	if ((EXTI->PR1 & EXTI_PR1_PR6) == EXTI_PR1_PR6) {
+		EXTI->PR1 = extpr6;
+		keys.interrupt(interrupt6);
+	}
+	if ((EXTI->PR1 & EXTI_PR1_PR7) == EXTI_PR1_PR7) {
+		EXTI->PR1 = extpr7;
+		keys.interrupt(interrupt7);
+	}
+	if ((EXTI->PR1 & EXTI_PR1_PR8) == EXTI_PR1_PR8) {
+		EXTI->PR1 = extpr8;
+		keys.interrupt(interrupt8);
+	}
+	if ((EXTI->PR1 & EXTI_PR1_PR9) == EXTI_PR1_PR9) {
+		EXTI->PR1 = extpr9;
+		keys.interrupt(interrupt9);
+	}
+}
+
+void EXTI15_10_IRQHandler(void) {
+	if ((EXTI->PR1 & EXTI_PR1_PR10) == EXTI_PR1_PR10) {
+		EXTI->PR1 = extpr10;
+		keys.interrupt(interrupt10);
+	}
+}
+
+extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
+
+void OTG_FS_IRQHandler(void) {
+	HAL_PCD_IRQHandler(&hpcd_USB_OTG_FS);
+}
+} // extern "C"
+
+// extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C"
+//===============================================================================================================================================
+
+
+
+
+
+
+
+
 void Error_Handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
   while (1)
   {
   }
-  /* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef  USE_FULL_ASSERT

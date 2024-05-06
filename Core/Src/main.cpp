@@ -22,10 +22,12 @@
 #include "tim.h"
 #include "usb_device.h"
 #include "gpio.h"
-
+#include "string"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+extern "C" {
 #include "lcd.h"
+}
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -105,13 +107,13 @@ int main(void)
 
 	LCD_Test();
 
-	char texxt[20];
+	uint8_t texxt[20];
 	int a = 0;
 	int tim_t = TIM2->CNT;
 	int32_t prevCounter = 0;
     int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
-	sprintf(texxt, "%d", a);
+//	sprintf(texxt, "%d", a);
 	LCD_ShowString(1, 11, 150, 40, 16, texxt);
 	HAL_Delay(100);
 
@@ -135,7 +137,7 @@ int main(void)
 	        snprintf(buff, sizeof(buff), "%06d", currCounter);
 
 	    	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
-	    	sprintf(texxt, "%d", currCounter);
+//	    	sprintf(texxt, "%d", currCounter);
 			//printf(buff, "1. целое число: %d \n", 1234);
 			//printf(buff, "2. дробное число: %f \n", 12.34);
 			//printf(buff, "3. 16-ричное: %X \n", 12.34);
@@ -147,8 +149,8 @@ int main(void)
 	    if(TIM2->CNT - tim_t > 1000000)
 	    {
 	    	tim_t = TIM2->CNT;
-	    	sprintf(texxt, "%d", a);
-	    	LCD_ShowString(1, 11, 150, 40, 16, texxt);
+	    	std::string s = std::to_string(a);
+	    	LCD_ShowString(1, 11, 150, 40, 16, (uint8_t*)s.c_str());
 	    	++a;
 	    }
 
@@ -157,7 +159,6 @@ int main(void)
   }
   /* USER CODE END 3 */
 }
-
 /**
   * @brief System Clock Configuration
   * @retval None

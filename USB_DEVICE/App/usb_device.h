@@ -22,6 +22,8 @@
 #ifndef __USB_DEVICE__H__
 #define __USB_DEVICE__H__
 
+#include <deque>
+#include <midi_keyboard.h>
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -30,10 +32,8 @@
 #include "stm32h7xx.h"
 #include "stm32h7xx_hal.h"
 #include "usbd_def.h"
-
+ }
 /* USER CODE BEGIN INCLUDE */
-#include <midi_keyboard.h>
-#include <deque>
 /* USER CODE END INCLUDE */
 
 /** @addtogroup USBD_OTG_DRIVER
@@ -64,7 +64,8 @@
  * -- Insert your variables declaration here --
  */
 /* USER CODE BEGIN VARIABLES */
-
+ class Note;
+ void MidiSender(std::deque<Note> &deqNote, uint8_t *buf);
 /* USER CODE END VARIABLES */
 /**
   * @}
@@ -97,7 +98,7 @@ void MX_USB_DEVICE_Init(void);
   */
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif /* __USB_DEVICE__H__ */

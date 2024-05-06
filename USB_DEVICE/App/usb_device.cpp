@@ -27,6 +27,7 @@
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN Includes */
+
 USBD_HandleTypeDef hUsbDeviceFS;
 USBD_CDC_HandleTypeDef *hcdcdc;
 
@@ -58,6 +59,7 @@ void MidiSender(std::deque<Note> &deqNote, uint8_t *buf) {
 		USBD_CDC_TransmitPacket(&hUsbDeviceFS);
 	}
 }
+
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN PV */
@@ -148,7 +150,6 @@ void MX_USB_DEVICE_Init(void)
 
 
   /* USER CODE END USB_DEVICE_Init_PostTreatment */
-}
 
 /**
   * @}

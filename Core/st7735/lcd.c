@@ -226,7 +226,7 @@ void LCD_ShowChar(uint16_t x,uint16_t y,uint8_t num,uint8_t size,uint8_t mode)
 	POINT_COLOR=colortemp;
 }
 
-void LCD_ShowString(uint16_t x,uint16_t y,uint16_t width,uint16_t height,uint8_t size,uint8_t *p)
+void LCD_ShowString(uint16_t x,uint16_t y,uint16_t width,uint16_t height,uint8_t size, int8_t *p)
 {
 	uint8_t x0=x;
 	width+=x;

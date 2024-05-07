@@ -75,6 +75,7 @@ public:
 	cuint hi = 0;
 	cuint lo = 0;
 	cuint note = 0;
+	int ofS = 0;
 	OnOrOff mO = OnOrOff::midiOn;
 };
 
@@ -93,7 +94,7 @@ public:
 	void wheel();
 	void interrupt(cuint &channel);
 	void print(cuint x, cuint y, cuint width, cuint height, cuint size,
-			cuint value);
+			const int value);
 private:
 	void numberNoteSetter();
 	void initBitMask();
@@ -101,7 +102,7 @@ private:
 	void maskLoadMidiOff();
 	void check();
 	void timerSave(const numberS &nu);
-	void sendMidi(cuint &nu, cuint &t, OnOrOff &mO);
+	void sendMidi(cuint &nu, cuint &t, const int &ofS, OnOrOff &mO);
 	void displayOperations();
 
 	static cuint sensors = 176;
@@ -111,7 +112,7 @@ private:
 	cuint maxMidi = 127;
 	uint divisible = 7'900'000;
 	uint reTriggering = uint(float(divisible) / 1.1f / 127.0f);
-	uint offset = 0;
+	int offset = 0;
 	uint timeToCleanUp = reTriggering;
 	uint max = divisible / (maxMidi * maxMidi);
 	uint off_lo = uint(float(divisible) / 1.0f / 127.0f);
@@ -134,6 +135,6 @@ private:
 
 	//vvvvvvvvvvvvvvvvvv display
 	uint lineNumber = 0;
-	uint cC = 0;
-	uint pC = 0;
+	int cC = 0;
+	int pC = 0;
 };

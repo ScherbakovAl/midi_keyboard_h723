@@ -108,7 +108,7 @@ void Keys::wheel() {
 	gpio.AndOffHi_Off(); // чтобы не грелись микрухи управляющие "off" ??
 	initBitMask();
 	mux.setSizeMux(sizeM);
-//	gpio.Enable_Qre1113();
+	gpio.Enable_Qre1113();
 //	SysTick->CTRL = 0;
 	print(6, 0, 60, 19, 12, divisible);
 	print(6, 20, 60, 19, 12, offset);

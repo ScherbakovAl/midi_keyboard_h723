@@ -3,8 +3,6 @@
 #include "spi.h"
 #include "tim.h"
 
-#include "board.h"
-
 //LCD_RST
 #define LCD_RST_SET
 #define LCD_RST_RESET

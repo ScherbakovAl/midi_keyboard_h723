@@ -10,6 +10,12 @@
 #include "usb_device.h"
 #include <deque>
 #include <bitset>
+#include <string>
+extern "C" {
+#include "lcd.h"
+}
+
+extern TIM_HandleTypeDef htim3;
 
 using uint = unsigned int;
 using cuint = const uint;
@@ -34,10 +40,10 @@ public:
 	void AndOffHi_Off();		// +A3	(AND_OFF)
 	void AndOffLo_Off();		// -A3	(AND_OFF)
 
-	void Test1();
-	void Test2();
-	void Test3();
-	void Test4();
+	void Enable_Qre1113();
+	void Disable_Qre1113();
+	void Enable_BlueLed();
+	void Disable_BlueLed();
 
 private:
 	cuint shLdHi = 0x1;
@@ -48,14 +54,12 @@ private:
 	cuint andOnLo = 0x40000;
 	cuint andOffHi = 0x8;
 	cuint andOffLo = 0x80000;
-	cuint test1On = 0x010;
-	cuint test1Off = 0x0100000;
-	cuint test2On = 0x020;
-	cuint test2Off = 0x0200000;
-	cuint test3On = 0x040;
-	cuint test3Off = 0x0400000;
-	cuint test4On = 0x080;
-	cuint test4Off = 0x0800000;
+	cuint qre1113_on1 = 0x100000;
+	cuint qre1113_on2 = 0x200000;
+	cuint qre1113_off1 = 0x10;
+	cuint qre1113_off2 = 0x20;
+	cuint blueLed_on = 0x8;
+	cuint blueLed_off = 0x80000;
 };
 
 class numberS {
@@ -88,6 +92,8 @@ class Keys {
 public:
 	void wheel();
 	void interrupt(cuint &channel);
+	void print(cuint x, cuint y, cuint width, cuint height, cuint size,
+			cuint value);
 private:
 	void numberNoteSetter();
 	void initBitMask();
@@ -96,25 +102,27 @@ private:
 	void check();
 	void timerSave(const numberS &nu);
 	void sendMidi(cuint &nu, cuint &t, OnOrOff &mO);
+	void displayOperations();
 
 	static cuint sensors = 176;
 	static cuint channelBits = 11;
 	static cuint sizeMux = 16;
-	cuint maxMidi = 127;
-	cuint divisible = 7'900'000;
-	cuint reTriggering = uint(float(divisible) / 1.1f / 127.0f);
-	cuint timeToCleanUp = reTriggering;
-	cuint max = divisible / (maxMidi * maxMidi);
-	cuint off_lo = uint(float(divisible) / 1.0f / 127.0f);
-	cuint off_hi = uint(float(divisible) / 60.0f / 127.0f);
 	cuint sizeM = sizeMux;
+	cuint maxMidi = 127;
+	uint divisible = 7'900'000;
+	uint reTriggering = uint(float(divisible) / 1.1f / 127.0f);
+	uint offset = 0;
+	uint timeToCleanUp = reTriggering;
+	uint max = divisible / (maxMidi * maxMidi);
+	uint off_lo = uint(float(divisible) / 1.0f / 127.0f);
+	uint off_hi = uint(float(divisible) / 60.0f / 127.0f);
 
 	muxer mux;
 	gpioBsrr gpio;
 	OnOrOff midiOnOrOff = OnOrOff::midiOn;
 	std::deque<numberS> dequeOn;
 	std::deque<Note> dequeNotes;
-	std::deque<unsigned long int> led;
+	std::deque<unsigned long int> dequeLed;
 	std::bitset<channelBits> bitsMidiOn[sizeMux];
 	std::bitset<channelBits> bitsMidiOff[sizeMux];
 	uint timer[sensors] = { };
@@ -123,4 +131,9 @@ private:
 	static cuint zero = 0;
 	static cuint one = 1;
 	static cuint two = 2;
+
+	//vvvvvvvvvvvvvvvvvv display
+	uint lineNumber = 0;
+	uint cC = 0;
+	uint pC = 0;
 };

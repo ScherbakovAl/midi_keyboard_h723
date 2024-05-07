@@ -68,41 +68,64 @@ int main(void) {
 	MX_TIM2_Init();
 	HAL_TIM_Base_Start(&htim2);
 	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-	LCD_Test();
-
-	GPIOA->BSRR = 0x100000;
-	HAL_Delay(800);
-	GPIOA->BSRR = 0x200000;
-	HAL_Delay(100);
+	LCD_Start();
 	keys.wheel();
 
-	uint8_t texxt[20];
 	int a = 0;
-	int tim_t = TIM2->CNT;
-	int prevCounter = 0;
-	int currCounter = __HAL_TIM_GET_COUNTER(&htim3);
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width, ST7735Ctx.Height, BLACK);
-	LCD_ShowString(1, 11, 150, 40, 16, texxt);
-	HAL_Delay(100);
+	int n = 0;
+	int x = 50;
+	int y = 50;
+	int pC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
+	int cC = pC;
+	int tim_t = 0;
 
 	while (1) {
-		currCounter = __HAL_TIM_GET_COUNTER(&htim3) / 2;
-		if (currCounter != prevCounter) {
-			std::string u = std::to_string(currCounter);
-			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,
-					ST7735Ctx.Height, BLACK);
-			LCD_ShowString(0, 40, 150, 40, 16, (uint8_t*) u.c_str());
-			prevCounter = currCounter;
+		if((GPIOC->IDR & GPIO_PIN_4) == 0x00U){
+			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width, ST7735Ctx.Height, BLACK);
+			keys.print(x, y, 60, 60, 12, 0);
+			if(n){
+				n = 0;
+			}
+			else{
+				n = 1;
+			}
+			HAL_Delay(200);
 		}
-		if (TIM2->CNT - tim_t > 1000000) {
+
+		cC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
+		keys.print(0, 0, 60, 60, 12, n);
+		keys.print(50, 0, 60, 60, 12, x);
+		keys.print(100, 0, 60, 60, 12, y);
+
+		if (cC != pC) {
+			keys.print(0, 70, 60, 60, 12, cC);
+//			ST7735_SetPixel(&st7735_pObj, cC, 0, WHITE);
+			if(!n){
+				if(cC < pC){
+					--x;
+				}
+				else{
+					++x;
+				}
+			}
+			else{
+				if(cC < pC){
+					--y;
+				}
+				else{
+					++y;
+				}
+			}
+				keys.print(x, y, 60, 60, 12, 0);
+			pC = cC;
+		}
+
+		if (TIM2->CNT - tim_t > 500000) {
 			tim_t = TIM2->CNT;
-			std::string s = std::to_string(a);
-			LCD_ShowString(0, 10, 150, 40, 16, (uint8_t*) s.c_str());
+			keys.print(0, 40, x, y, 16, 1234567890);
 			++a;
 		}
-
 	}
-
 }
 
 void SystemClock_Config(void) {

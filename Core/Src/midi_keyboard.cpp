@@ -8,74 +8,70 @@
 
 #include <midi_keyboard.h>
 
-// ################################################## for ON
+// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv for ON
 void gpioBsrr::ShLdHi_On() {
 	GPIOA->BSRR |= shLdHi;
 }
-
 void gpioBsrr::ShLdLo_On() {
 	GPIOA->BSRR = shLdLo;
 }
-
 void gpioBsrr::ClkHi_On() {
 	GPIOA->BSRR |= clkHi;
 }
-
 void gpioBsrr::ClkLo_On() {
 	GPIOA->BSRR = clkLo;
 }
-
 void gpioBsrr::AndHi_On() {
 	GPIOA->BSRR |= andOnHi;
 }
-
 void gpioBsrr::AndLo_On() {
 	GPIOA->BSRR |= andOnLo;
 }
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ for ON
 
-// ################################################## for OFF
+// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv for OFF
 void gpioBsrr::ShLdHi_Off() {
 	GPIOA->BSRR |= shLdHi;
 }
-
 void gpioBsrr::ShLdLo_Off() {
 	GPIOA->BSRR = shLdLo;
 }
-
 void gpioBsrr::ClkHi_Off() {
 	GPIOA->BSRR |= clkHi;
 }
-
 void gpioBsrr::ClkLo_Off() {
 	GPIOA->BSRR = clkLo;
 }
-
 void gpioBsrr::AndOffHi_Off() {
 	GPIOA->BSRR |= andOffHi;
 }
-
 void gpioBsrr::AndOffLo_Off() {
 	GPIOA->BSRR |= andOffLo;
 }
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ for OFF
 
-void gpioBsrr::Test1() {
-	GPIOA->BSRR = test1On;
-	GPIOA->BSRR = test1Off;
+void gpioBsrr::Enable_Qre1113() {
+	HAL_Delay(100);
+	GPIOA->BSRR = qre1113_on1;
+	HAL_Delay(100);
+	GPIOA->BSRR = qre1113_on2;
+	HAL_Delay(100);
 }
 
-void gpioBsrr::Test2() {
-	GPIOA->BSRR = test2On;
-	GPIOA->BSRR = test2Off;
+void gpioBsrr::Disable_Qre1113() {
+	HAL_Delay(100);
+	GPIOA->BSRR = qre1113_off1;
+	HAL_Delay(100);
+	GPIOA->BSRR = qre1113_off2;
+	HAL_Delay(100);
 }
 
-void gpioBsrr::Test3() {
-	GPIOA->BSRR = test3On;
-	GPIOA->BSRR = test3Off;
+void gpioBsrr::Enable_BlueLed() {
+	GPIOE->BSRR = blueLed_on;
 }
 
-void gpioBsrr::Test4() {
-	GPIOA->BSRR = test4On;
-	GPIOA->BSRR = test4Off;
+void gpioBsrr::Disable_BlueLed() {
+	GPIOE->BSRR = blueLed_off;
 }
 
 void numberS::set(cuint &channel, cuint &m) {
@@ -112,7 +108,10 @@ void Keys::wheel() {
 	gpio.AndOffHi_Off(); // чтобы не грелись микрухи управляющие "off" ??
 	initBitMask();
 	mux.setSizeMux(sizeM);
-	SysTick->CTRL = 0;
+//	gpio.Enable_Qre1113();
+//	SysTick->CTRL = 0;
+	print(0, 0, 60, 12, 12, divisible);
+	print(0, 12, 60, 12, 12, offset);
 
 	while (1) {
 		midiOnOrOff = OnOrOff::midiOn;
@@ -173,12 +172,16 @@ void Keys::check() {
 	if (!dequeNotes.empty()) {
 		MidiSender(dequeNotes, bufNotes);
 	}
-	if (!led.empty()) {
-		auto &l = led.front();
+	if (!dequeLed.empty()) {
+		auto &l = dequeLed.front();
 		if (TIM2->CNT - l > 200'000) {
-			GPIOE->BSRR = 0x80000;
-			led.pop_front();
+			gpio.Disable_BlueLed();
+			dequeLed.pop_front();
 		}
+	}
+	if ((GPIOC->IDR & GPIO_PIN_4) == 0x00U) {
+		HAL_Delay(200);
+		displayOperations();
 	}
 }
 
@@ -211,8 +214,8 @@ void Keys::timerSave(const numberS &nu) {
 		auto time = Now - timer[nu.number - 1];
 		if (time < max) {
 			time = max + 1;
-			GPIOE->BSRR = 0x8;
-			led.push_back(Now);
+			gpio.Enable_BlueLed();
+			dequeLed.push_back(Now);
 		}
 		timer[nu.number] = Now;
 		sendMidi(nu.number, time, midiOnOrOff);
@@ -225,6 +228,100 @@ void Keys::sendMidi(cuint &nu, cuint &t, OnOrOff &mO) {
 	auto midi_hi = midi_speed / maxMidi;
 	auto midi_lo = midi_speed - midi_hi * maxMidi;
 	dequeNotes.push_back( { midi_hi, midi_lo, notes[nu], mO });
+}
+
+void Keys::displayOperations() {
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, GREEN);
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 5, 159, 3, BLACK);
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 25, 159, 3, BLACK);
+	print(50, 50, 60, 19, 12, lineNumber);
+	print(0, 0, 60, 19, 12, divisible);
+	print(0, 20, 60, 19, 12, offset);
+	int t = TIM2->CNT;
+	while (TIM2->CNT - t < 3000000) {
+		cC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
+		if (cC != pC) {
+			t = TIM2->CNT;
+			if (cC < pC) {
+				--lineNumber;
+				ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, GREEN);
+				print(50, 50, 60, 19, 12, lineNumber);
+				print(0, 0, 60, 19, 12, divisible);
+				print(0, 20, 60, 19, 12, offset);
+			} else {
+				++lineNumber;
+				ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, GREEN);
+				print(50, 50, 60, 19, 12, lineNumber);
+				print(0, 0, 60, 19, 12, divisible);
+				print(0, 20, 60, 19, 12, offset);
+			}
+		}
+		pC = cC;
+		if ((GPIOC->IDR & GPIO_PIN_4) == 0x00U) {
+			HAL_Delay(200);
+			if (lineNumber == 0) {
+				t = TIM2->CNT;
+				while (TIM2->CNT - t < 3000000) {
+					cC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
+					if (cC != pC) {
+						t = TIM2->CNT;
+						if (cC < pC) {
+							--divisible;
+						} else {
+							++divisible;
+						}
+						pC = cC;
+						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79,
+						GREEN);
+						print(50, 50, 60, 19, 12, lineNumber);
+						print(0, 0, 60, 19, 12, divisible);
+						print(0, 20, 60, 19, 12, offset);
+					}
+					if ((GPIOC->IDR & GPIO_PIN_4) == 0x00U) {
+						HAL_Delay(200);
+						break;
+//						continue;
+//						return;
+					}
+				}
+			}
+			if (lineNumber == 1) {
+				t = TIM2->CNT;
+				while (TIM2->CNT - t < 3000000) {
+					cC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
+					if (cC != pC) {
+						t = TIM2->CNT;
+						if (cC < pC) {
+							--offset;
+						} else {
+							++offset;
+						}
+						pC = cC;
+						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79,
+						GREEN);
+						print(50, 50, 60, 19, 12, lineNumber);
+						print(0, 0, 60, 19, 12, divisible);
+						print(0, 20, 60, 19, 12, offset);
+					}
+					if ((GPIOC->IDR & GPIO_PIN_4) == 0x00U) {
+						HAL_Delay(200);
+						break;
+//						continue;
+//						return;
+					}
+				}
+			}
+		}
+	}
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
+	print(0, 0, 60, 19, 12, divisible);
+	print(0, 20, 60, 19, 12, offset);
+}
+
+void Keys::print(cuint x, cuint y, cuint width, cuint height, cuint size,
+		cuint value) {
+	const std::string u = std::to_string(value);
+	LCD_ShowString(x, y, width, height, size, (uint8_t*) u.c_str());
 }
 
 void muxer::toggle() {

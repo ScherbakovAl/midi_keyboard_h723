@@ -316,7 +316,32 @@ void Keys::displayOperations() {
 				}
 			}
 		}
-		if (e > 0) {
+		if (e == 2) {
+			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x3333);
+			cC = pC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
+			t = TIM2->CNT;
+			while (TIM2->CNT - t < 3000000) {
+				cC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
+				if (cC != pC) {
+					t = TIM2->CNT;
+					ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79,
+							0x3333);
+					print(78, 44, 60, 19, 16, -0);
+					pC = cC;
+					HAL_Delay(500);
+					HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);//pin4 == кнопка К1 на плате
+					__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+					HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4);
+					HAL_PWR_EnterSTANDBYMode();
+				}
+				if ((GPIOC->IDR & GPIO_PIN_4) == 0x00U) {
+					HAL_Delay(300);
+					++e;
+					break;
+				}
+			}
+		}
+		if (e > 1) {
 			e = 0;
 		} else {
 			++e;

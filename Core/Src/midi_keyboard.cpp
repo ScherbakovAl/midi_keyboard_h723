@@ -318,6 +318,7 @@ void Keys::displayOperations() {
 		}
 		if (e == 2) {
 			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x3333);
+			printString(40, 35, 80, 20, 16, "OFF....??");
 			cC = pC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
 			t = TIM2->CNT;
 			while (TIM2->CNT - t < 3000000) {
@@ -326,7 +327,7 @@ void Keys::displayOperations() {
 					t = TIM2->CNT;
 					ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79,
 							0x3333);
-					print(78, 44, 60, 19, 16, -0);
+					printString(40, 35, 80, 20, 16, "000000000");
 					pC = cC;
 					HAL_Delay(500);
 					HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);//pin4 == кнопка К1 на плате
@@ -363,6 +364,11 @@ void Keys::print(cuint x, cuint y, cuint width, cuint height, cuint size,
 		const int value) {
 	const std::string u = std::to_string(value);
 	LCD_ShowString(x, y, width, height, size, (int8_t*) u.c_str());
+}
+
+void Keys::printString(cuint x, cuint y, cuint width, cuint height, cuint size,
+		const std::string value) {
+	LCD_ShowString(x, y, width, height, size, (int8_t*) value.c_str());
 }
 
 void muxer::toggle() {

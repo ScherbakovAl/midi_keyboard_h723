@@ -95,6 +95,8 @@ public:
 	void interrupt(cuint &channel);
 	void print(cuint x, cuint y, cuint width, cuint height, cuint size,
 			const int value);
+	void printString(cuint x, cuint y, cuint width, cuint height, cuint size,
+			const std::string value);
 private:
 	void numberNoteSetter();
 	void initBitMask();

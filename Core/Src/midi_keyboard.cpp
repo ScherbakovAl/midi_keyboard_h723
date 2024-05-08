@@ -51,19 +51,19 @@ void gpioBsrr::AndOffLo_Off() {
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ for OFF
 
 void gpioBsrr::Enable_Qre1113() {
-	HAL_Delay(100);
+	HAL_Delay(200);
 	GPIOA->BSRR = qre1113_on1;
-	HAL_Delay(100);
+	HAL_Delay(200);
 	GPIOA->BSRR = qre1113_on2;
-	HAL_Delay(100);
+	HAL_Delay(200);
 }
 
 void gpioBsrr::Disable_Qre1113() {
-	HAL_Delay(100);
+	HAL_Delay(200);
 	GPIOA->BSRR = qre1113_off1;
-	HAL_Delay(100);
+	HAL_Delay(200);
 	GPIOA->BSRR = qre1113_off2;
-	HAL_Delay(100);
+	HAL_Delay(200);
 }
 
 void gpioBsrr::Enable_BlueLed() {
@@ -108,10 +108,11 @@ void Keys::wheel() {
 	gpio.AndOffHi_Off(); // чтобы не грелись микрухи управляющие "off" ??
 	initBitMask();
 	mux.setSizeMux(sizeM);
+	__HAL_TIM_SET_COUNTER(&htim3, 32760);
 	gpio.Enable_Qre1113();
 //	SysTick->CTRL = 0;
-	print(6, 0, 60, 19, 12, divisible);
-	print(6, 20, 60, 19, 12, offset);
+	print(6, 0, 60, 19, 16, divisible);
+	print(6, 20, 60, 19, 16, offset);
 
 	while (1) {
 		midiOnOrOff = OnOrOff::midiOn;
@@ -234,27 +235,18 @@ void Keys::displayOperations() {
 
 	int e = 0;
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x2222);
-	print(6, 0, 60, 19, 12, divisible);
-	print(6, 20, 60, 19, 12, offset);
+	print(6, 0, 60, 19, 16, divisible);
+	print(6, 20, 60, 19, 16, offset);
+	cC = pC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
 	int t = TIM2->CNT;
 
 	while (TIM2->CNT - t < 3000000) {
-
-		if ((GPIOC->IDR & GPIO_PIN_4) == 0x00U) {
-			HAL_Delay(300);
-			if (e > 0) {
-				e = 0;
-			} else {
-				++e;
-			}
-		}
-
 		if (e == 0) {
 			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x2222);
-			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 5, 5, 3,
+			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 6, 3, 3,
 			RED);
-			print(6, 0, 60, 19, 12, divisible);
-			print(6, 20, 60, 19, 12, offset);
+			print(6, 0, 60, 19, 16, divisible);
+			print(6, 20, 60, 19, 16, offset);
 			t = TIM2->CNT;
 			while (TIM2->CNT - t < 3000000) {
 				cC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
@@ -264,18 +256,18 @@ void Keys::displayOperations() {
 						divisible -= 100000;
 						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79,
 								0x2222);
-						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 5, 5, 3,
+						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 6, 3, 3,
 						RED);
-						print(6, 0, 60, 19, 12, divisible);
-						print(6, 20, 60, 19, 12, offset);
+						print(6, 0, 60, 19, 16, divisible);
+						print(6, 20, 60, 19, 16, offset);
 					} else {
 						divisible += 100000;
 						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79,
 								0x2222);
-						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 5, 5, 3,
+						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 6, 3, 3,
 						RED);
-						print(6, 0, 60, 19, 12, divisible);
-						print(6, 20, 60, 19, 12, offset);
+						print(6, 0, 60, 19, 16, divisible);
+						print(6, 20, 60, 19, 16, offset);
 					}
 					pC = cC;
 				}
@@ -289,10 +281,10 @@ void Keys::displayOperations() {
 
 		if (e == 1) {
 			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x2222);
-			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 25, 5, 3,
+			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 26, 3, 3,
 			RED);
-			print(6, 0, 60, 19, 12, divisible);
-			print(6, 20, 60, 19, 12, offset);
+			print(6, 0, 60, 19, 16, divisible);
+			print(6, 20, 60, 19, 16, offset);
 			t = TIM2->CNT;
 			while (TIM2->CNT - t < 3000000) {
 				cC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
@@ -302,18 +294,18 @@ void Keys::displayOperations() {
 						--offset;
 						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79,
 								0x2222);
-						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 25, 5, 3,
+						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 26, 3, 3,
 						RED);
-						print(6, 0, 60, 19, 12, divisible);
-						print(6, 20, 60, 19, 12, offset);
+						print(6, 0, 60, 19, 16, divisible);
+						print(6, 20, 60, 19, 16, offset);
 					} else {
 						++offset;
 						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79,
 								0x2222);
-						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 25, 5, 3,
+						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 26, 3, 3,
 						RED);
-						print(6, 0, 60, 19, 12, divisible);
-						print(6, 20, 60, 19, 12, offset);
+						print(6, 0, 60, 19, 16, divisible);
+						print(6, 20, 60, 19, 16, offset);
 					}
 					pC = cC;
 				}
@@ -324,6 +316,11 @@ void Keys::displayOperations() {
 				}
 			}
 		}
+		if (e > 0) {
+			e = 0;
+		} else {
+			++e;
+		}
 	}	//while
 
 	reTriggering = uint(float(divisible) / 1.1f / 127.0f);
@@ -333,8 +330,8 @@ void Keys::displayOperations() {
 	off_hi = uint(float(divisible) / 60.0f / 127.0f);
 
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
-	print(6, 0, 60, 19, 12, divisible);
-	print(6, 20, 60, 19, 12, offset);
+	print(6, 0, 60, 19, 16, divisible);
+	print(6, 20, 60, 19, 16, offset);
 }
 
 void Keys::print(cuint x, cuint y, cuint width, cuint height, cuint size,

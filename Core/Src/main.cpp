@@ -64,11 +64,21 @@ int main(void) {
 	MX_SPI4_Init();
 	MX_TIM1_Init();
 	MX_TIM3_Init();
-	MX_USB_DEVICE_Init();
 	MX_TIM2_Init();
 	HAL_TIM_Base_Start(&htim2);
 	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 	LCD_Start();
+	if (!__HAL_PWR_GET_FLAG(PWR_FLAG_SB)) {
+		HAL_Delay(500);
+		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);//pin4 == кнопка К1 на плате
+		__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+		HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4);
+		HAL_PWR_EnterSTANDBYMode();
+	} else {
+		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);
+	}
+	MX_USB_DEVICE_Init();
+	HAL_Delay(500);
 	keys.wheel();
 
 	int a = 0;
@@ -80,13 +90,13 @@ int main(void) {
 	int tim_t = 0;
 
 	while (1) {
-		if((GPIOC->IDR & GPIO_PIN_4) == 0x00U){
-			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width, ST7735Ctx.Height, BLACK);
+		if ((GPIOC->IDR & GPIO_PIN_4) == 0x00U) {
+			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,
+					ST7735Ctx.Height, BLACK);
 			keys.print(x, y, 60, 60, 12, 0);
-			if(n){
+			if (n) {
 				n = 0;
-			}
-			else{
+			} else {
 				n = 1;
 			}
 			HAL_Delay(200);
@@ -100,23 +110,20 @@ int main(void) {
 		if (cC != pC) {
 			keys.print(0, 70, 60, 60, 12, cC);
 //			ST7735_SetPixel(&st7735_pObj, cC, 0, WHITE);
-			if(!n){
-				if(cC < pC){
+			if (!n) {
+				if (cC < pC) {
 					--x;
-				}
-				else{
+				} else {
 					++x;
 				}
-			}
-			else{
-				if(cC < pC){
+			} else {
+				if (cC < pC) {
 					--y;
-				}
-				else{
+				} else {
 					++y;
 				}
 			}
-				keys.print(x, y, 60, 60, 12, 0);
+			keys.print(x, y, 60, 60, 12, 0);
 			pC = cC;
 		}
 

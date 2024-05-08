@@ -327,8 +327,9 @@ void Keys::displayOperations() {
 					t = TIM2->CNT;
 					ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79,
 							0x3333);
-					printString(40, 35, 80, 20, 16, "000000000");
+					printString(40, 35, 80, 20, 16, "SLEEP....");
 					pC = cC;
+					gpio.Disable_Qre1113();
 					HAL_Delay(500);
 					HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);//pin4 == кнопка К1 на плате
 					__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);

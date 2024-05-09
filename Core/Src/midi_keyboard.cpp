@@ -231,6 +231,16 @@ void Keys::sendMidi(cuint &nu, cuint &t, const int &ofs, OnOrOff &mO) {
 	auto midi_hi = midi_speed / maxMidi;
 	auto midi_lo = midi_speed - midi_hi * maxMidi;
 	auto m_h_o = midi_hi + ofs;
+
+	if(mO == OnOrOff::midiOn){
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
+	print(0, 0, 159, 19, 12, t);
+	print(0, 13, 159, 19, 12, midi_speed);
+	print(0, 26, 159, 19, 12, midi_hi);
+	print(30, 26, 159, 19, 12, midi_lo);
+	}
+
+
 	if (m_h_o > 127) {
 		m_h_o = 127;
 		gpio.Enable_BlueLed();

@@ -75,7 +75,6 @@ public:
 	cuint hi = 0;
 	cuint lo = 0;
 	cuint note = 0;
-	int ofS = 0;
 	OnOrOff mO = OnOrOff::midiOn;
 };
 
@@ -114,22 +113,23 @@ private:
 	cuint maxMidi = 127;
 	uint divisible = 7'900'000;
 	uint reTriggering = uint(float(divisible) / 1.1f / 127.0f);
-	int offset = 0;
 	uint timeToCleanUp = reTriggering;
 	uint max = divisible / (maxMidi * maxMidi);
 	uint off_lo = uint(float(divisible) / 1.0f / 127.0f);
 	uint off_hi = uint(float(divisible) / 60.0f / 127.0f);
+	int offset = 0;
 
 	muxer mux;
 	gpioBsrr gpio;
 	OnOrOff midiOnOrOff = OnOrOff::midiOn;
 	std::deque<numberS> dequeOn;
 	std::deque<Note> dequeNotes;
-	std::deque<unsigned long int> dequeLed;
+	std::deque<uint> dequeLed;
 	std::bitset<channelBits> bitsMidiOn[sizeMux];
 	std::bitset<channelBits> bitsMidiOff[sizeMux];
 	uint timer[sensors] = { };
 	uint notes[sensors];
+	uint prePressure = 0;
 	uint8_t bufNotes[512] = { };
 	static cuint zero = 0;
 	static cuint one = 1;

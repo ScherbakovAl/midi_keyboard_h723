@@ -70,7 +70,7 @@ int main(void) {
 	LCD_Start();
 	if (!__HAL_PWR_GET_FLAG(PWR_FLAG_SB)) {
 		HAL_Delay(500);
-		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);//pin4 == кнопка К1 на плате
+		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4); //pin4 == кнопка К1 на плате
 		__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
 		HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4);
 		HAL_PWR_EnterSTANDBYMode();

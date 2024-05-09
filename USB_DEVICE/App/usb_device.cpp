@@ -40,10 +40,6 @@ void MidiSender(std::deque<Note> &deqNote, uint8_t *buf) {
 			i = 512;
 		}
 		for (auto &n : deqNote) {
-			int vel = (int)n.hi + n.ofS;
-			if(vel > 127) vel = 127;
-			if(vel < 0) vel = 1;
-
 			buf[s] = 9; // ??
 			buf[s + 1] = 176; // 176 (for hi-res midi)
 			buf[s + 2] = 88; // 88 (for hi-res midi)
@@ -52,13 +48,11 @@ void MidiSender(std::deque<Note> &deqNote, uint8_t *buf) {
 			buf[s + 4] = 9; // ?
 			buf[s + 5] = uint8_t(n.mO); // 0x90(144) - note on, 0x80(128) - note off
 			buf[s + 6] = n.note; // number note
-			buf[s + 7] = vel; // velocity 86.xx
+			buf[s + 7] = n.hi; // velocity 86.xx
 
 			s += 8;
 		}
-
 		deqNote.clear();
-
 		USBD_CDC_SetTxBuffer(&hUsbDeviceHS, buf, i);
 		USBD_CDC_TransmitPacket(&hUsbDeviceHS);
 	}

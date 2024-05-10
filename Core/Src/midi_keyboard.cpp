@@ -16,19 +16,19 @@ void gpioBsrr::ShLdHi_On() {
 	GPIOA->BSRR = shLdHi;
 }
 void gpioBsrr::ShLdLo_On() {
-	GPIOA->BSRR |= shLdLo;//| убрать?
+	GPIOA->BSRR |= shLdLo; //| убрать?
 }
 void gpioBsrr::ClkHi_On() {
-	GPIOA->BSRR |= clkHi;//| убрать?
+	GPIOA->BSRR |= clkHi; //| убрать?
 }
 void gpioBsrr::ClkLo_On() {
 	GPIOA->BSRR = clkLo;
 }
 void gpioBsrr::AndHi_On() {
-	GPIOA->BSRR |= andOnHi;//|
+	GPIOA->BSRR |= andOnHi; //|
 }
 void gpioBsrr::AndLo_On() {
-	GPIOA->BSRR |= andOnLo;//|
+	GPIOA->BSRR |= andOnLo; //|
 }
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ for ON
 
@@ -125,16 +125,16 @@ void Keys::wheel() {
 	while (1) {
 		midiOnOrOff = OnOrOff::midiOn;
 		for (uint i = 0; i < 59; ++i) {
-			test1 = SysTick->VAL;//for test
+
 			maskLoadMidiOn();
 			gpio.ShLdHi_On();
 			gpio.AndLo_On();
 			gpio.ShLdLo_On();
 			gpio.AndHi_On();
+			gpio.AndHi_On(); // для стабильности
 			mux.toggle();
 
 			for (uint o = one; o < sizeMux; ++o) {
-				test1 = SysTick->VAL;// for test
 				maskLoadMidiOn();
 				gpio.ClkLo_On();
 				gpio.AndLo_On();
@@ -150,6 +150,7 @@ void Keys::wheel() {
 		gpio.AndOffLo_Off();
 		gpio.ShLdLo_Off();
 		gpio.AndOffHi_Off();
+		gpio.AndOffHi_Off(); // для стабильности
 		mux.toggle();
 
 		for (uint p = one; p < sizeMux; ++p) {
@@ -197,13 +198,6 @@ void Keys::check() {
 }
 
 void Keys::interrupt(cuint &channel) {
-	test2 = test1 - SysTick->VAL; // for test
-//	GPIOA->BSRR |= 0x200; //for test
-//	GPIOA->BSRR |= 0x2000000; //for test
-//	GPIOA->BSRR |= 0x8000; //for test
-//	GPIOA->BSRR |= 0x80000000; // for test
-//	GPIOA->BSRR |= 0x200; //for test
-//	GPIOA->BSRR |= 0x2000000; //for test
 	numberS nu;
 	nu.set(channel, mux.get());
 	if (midiOnOrOff == OnOrOff::midiOn) {
@@ -229,22 +223,12 @@ void Keys::interrupt(cuint &channel) {
 void Keys::timerSave(const numberS &nu) {
 	auto Now = TIM2->CNT;
 	if (nu.mux % 2 == 0) {
-//		GPIOA->BSRR |= 0x200; //for test
-//		GPIOA->BSRR |= 0x2000000; //for test
-//		++test1;
 		timer[nu.number] = Now;
-//		GPIOA->BSRR |= 0x200; //for test
-//		GPIOA->BSRR |= 0x2000000; // for test
 	} else {
 //		GPIOA->BSRR |= 0x8000; //for test
 //		GPIOA->BSRR |= 0x80000000; // for test
-//		++test2;
 		auto time = Now - timer[nu.number - 1];
 		timer[nu.number] = Now;
-//		test3 = time;
-//		test4 = test1 - test2;
-//		GPIOA->BSRR |= 0x8000; //for test
-//		GPIOA->BSRR |= 0x80000000; // for test
 		sendMidi(nu.number, time, offset, midiOnOrOff);
 		bitsMidiOff[nu.mux - 1].set(nu.cha);
 	}
@@ -256,12 +240,13 @@ void Keys::sendMidi(cuint &nu, cuint &t, const int &ofs, OnOrOff &mO) {
 	auto midi_lo = midi_speed - midi_hi * maxMidi;
 	auto m_h_o = midi_hi + ofs;
 	if (mO == OnOrOff::midiOn) {
-		ST7735_LCD_Driver.FillRect(&st7735_pObj, 6, 60, 100, 20, BLACK);//
+//		test1 = SysTick->VAL; //for test
+//		ST7735_LCD_Driver.FillRect(&st7735_pObj, 6, 60, 100, 20, BLACK);	//
 //		print(0, 0, 159, 19, 12, t);
 //		print(0, 13, 159, 19, 12, midi_speed);
 //		print(0, 26, 159, 19, 12, midi_hi);
 //		print(30, 26, 159, 19, 12, midi_lo);
-		print(6, 60, 159, 19, 12, test2);//
+//		print(6, 60, 159, 19, 12, test2);//
 //		print(30, 39, 159, 19, 12, test2);
 //		print(60, 39, 159, 19, 12, test4);
 //		print(0, 52, 159, 19, 12, test3);

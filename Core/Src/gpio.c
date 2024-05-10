@@ -68,7 +68,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PAPin PAPin PAPin PAPin */
-  GPIO_InitStruct.Pin = SH_LD_Pin|CLK_Pin|AND_Pin|AND_OFF_Pin;
+  GPIO_InitStruct.Pin = SH_LD_Pin|CLK_Pin|AND_Pin|AND_OFF_Pin|0x200|0x8000;//for test (0x200|0x8000)
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;

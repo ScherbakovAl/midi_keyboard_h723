@@ -7,34 +7,37 @@
  */
 
 #include <midi_keyboard.h>
-
+int test1 = 0;
+int test2 = 0;
+int test3 = 0;
+int test4 = 0;
 // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv for ON
 void gpioBsrr::ShLdHi_On() {
-	GPIOA->BSRR |= shLdHi;
+	GPIOA->BSRR = shLdHi;
 }
 void gpioBsrr::ShLdLo_On() {
-	GPIOA->BSRR = shLdLo;
+	GPIOA->BSRR |= shLdLo;//| убрать?
 }
 void gpioBsrr::ClkHi_On() {
-	GPIOA->BSRR |= clkHi;
+	GPIOA->BSRR |= clkHi;//| убрать?
 }
 void gpioBsrr::ClkLo_On() {
 	GPIOA->BSRR = clkLo;
 }
 void gpioBsrr::AndHi_On() {
-	GPIOA->BSRR |= andOnHi;
+	GPIOA->BSRR |= andOnHi;//|
 }
 void gpioBsrr::AndLo_On() {
-	GPIOA->BSRR |= andOnLo;
+	GPIOA->BSRR |= andOnLo;//|
 }
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ for ON
 
 // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv for OFF
 void gpioBsrr::ShLdHi_Off() {
-	GPIOA->BSRR |= shLdHi;
+	GPIOA->BSRR = shLdHi;
 }
 void gpioBsrr::ShLdLo_Off() {
-	GPIOA->BSRR = shLdLo;
+	GPIOA->BSRR |= shLdLo;
 }
 void gpioBsrr::ClkHi_Off() {
 	GPIOA->BSRR |= clkHi;
@@ -122,16 +125,18 @@ void Keys::wheel() {
 	while (1) {
 		midiOnOrOff = OnOrOff::midiOn;
 		for (uint i = 0; i < 59; ++i) {
-			gpio.ShLdHi_On();
+			test1 = SysTick->VAL;//for test
 			maskLoadMidiOn();
+			gpio.ShLdHi_On();
 			gpio.AndLo_On();
 			gpio.ShLdLo_On();
 			gpio.AndHi_On();
 			mux.toggle();
 
 			for (uint o = one; o < sizeMux; ++o) {
-				gpio.ClkLo_On();
+				test1 = SysTick->VAL;// for test
 				maskLoadMidiOn();
+				gpio.ClkLo_On();
 				gpio.AndLo_On();
 				gpio.ClkHi_On();
 				gpio.AndHi_On();
@@ -140,16 +145,16 @@ void Keys::wheel() {
 			check();
 		}
 		midiOnOrOff = OnOrOff::midiOff;
-		gpio.ShLdHi_Off();
 		maskLoadMidiOff();
+		gpio.ShLdHi_Off();
 		gpio.AndOffLo_Off();
 		gpio.ShLdLo_Off();
 		gpio.AndOffHi_Off();
 		mux.toggle();
 
 		for (uint p = one; p < sizeMux; ++p) {
-			gpio.ClkLo_Off();
 			maskLoadMidiOff();
+			gpio.ClkLo_Off();
 			gpio.AndOffLo_Off();
 			gpio.ClkHi_Off();
 			gpio.AndOffHi_Off();
@@ -192,6 +197,13 @@ void Keys::check() {
 }
 
 void Keys::interrupt(cuint &channel) {
+	test2 = test1 - SysTick->VAL; // for test
+//	GPIOA->BSRR |= 0x200; //for test
+//	GPIOA->BSRR |= 0x2000000; //for test
+//	GPIOA->BSRR |= 0x8000; //for test
+//	GPIOA->BSRR |= 0x80000000; // for test
+//	GPIOA->BSRR |= 0x200; //for test
+//	GPIOA->BSRR |= 0x2000000; //for test
 	numberS nu;
 	nu.set(channel, mux.get());
 	if (midiOnOrOff == OnOrOff::midiOn) {
@@ -217,10 +229,22 @@ void Keys::interrupt(cuint &channel) {
 void Keys::timerSave(const numberS &nu) {
 	auto Now = TIM2->CNT;
 	if (nu.mux % 2 == 0) {
+//		GPIOA->BSRR |= 0x200; //for test
+//		GPIOA->BSRR |= 0x2000000; //for test
+//		++test1;
 		timer[nu.number] = Now;
+//		GPIOA->BSRR |= 0x200; //for test
+//		GPIOA->BSRR |= 0x2000000; // for test
 	} else {
+//		GPIOA->BSRR |= 0x8000; //for test
+//		GPIOA->BSRR |= 0x80000000; // for test
+//		++test2;
 		auto time = Now - timer[nu.number - 1];
 		timer[nu.number] = Now;
+//		test3 = time;
+//		test4 = test1 - test2;
+//		GPIOA->BSRR |= 0x8000; //for test
+//		GPIOA->BSRR |= 0x80000000; // for test
 		sendMidi(nu.number, time, offset, midiOnOrOff);
 		bitsMidiOff[nu.mux - 1].set(nu.cha);
 	}
@@ -231,15 +255,17 @@ void Keys::sendMidi(cuint &nu, cuint &t, const int &ofs, OnOrOff &mO) {
 	auto midi_hi = midi_speed / maxMidi;
 	auto midi_lo = midi_speed - midi_hi * maxMidi;
 	auto m_h_o = midi_hi + ofs;
-
-	if(mO == OnOrOff::midiOn){
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
-	print(0, 0, 159, 19, 12, t);
-	print(0, 13, 159, 19, 12, midi_speed);
-	print(0, 26, 159, 19, 12, midi_hi);
-	print(30, 26, 159, 19, 12, midi_lo);
+	if (mO == OnOrOff::midiOn) {
+		ST7735_LCD_Driver.FillRect(&st7735_pObj, 6, 60, 100, 20, BLACK);//
+//		print(0, 0, 159, 19, 12, t);
+//		print(0, 13, 159, 19, 12, midi_speed);
+//		print(0, 26, 159, 19, 12, midi_hi);
+//		print(30, 26, 159, 19, 12, midi_lo);
+		print(6, 60, 159, 19, 12, test2);//
+//		print(30, 39, 159, 19, 12, test2);
+//		print(60, 39, 159, 19, 12, test4);
+//		print(0, 52, 159, 19, 12, test3);
 	}
-
 
 	if (m_h_o > 127) {
 		m_h_o = 127;
@@ -435,7 +461,7 @@ void Keys::displayOperations() {
 					pC = cC;
 					gpio.Disable_Qre1113();
 					HAL_Delay(500);
-					HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);//pin4 == кнопка К1 на плате
+					HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4); //pin4 == кнопка К1 на плате
 					__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
 					HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4);
 					HAL_PWR_EnterSTANDBYMode();
@@ -454,9 +480,8 @@ void Keys::displayOperations() {
 		}
 	}	//while
 
-	reTriggering = uint(float(divisible) / 1.1f / 127.0f);
-	timeToCleanUp = reTriggering;
-	max = divisible / (maxMidi * maxMidi);
+	timeToCleanUp = uint(float(divisible) / 1.1f / 127.0f);
+//	max = divisible / (maxMidi * maxMidi);
 	off_lo = uint(float(divisible) / 1.0f / 127.0f);
 	off_hi = uint(float(divisible) / 60.0f / 127.0f);
 

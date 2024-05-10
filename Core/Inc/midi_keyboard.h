@@ -112,9 +112,8 @@ private:
 	cuint sizeM = sizeMux;
 	cuint maxMidi = 127;
 	uint divisible = 7'900'000;
-	uint reTriggering = uint(float(divisible) / 1.1f / 127.0f);
-	uint timeToCleanUp = reTriggering;
-	uint max = divisible / (maxMidi * maxMidi);
+	uint timeToCleanUp = uint(float(divisible) / 1.1f / 127.0f);
+//	uint max = divisible / (maxMidi * maxMidi);
 	uint off_lo = uint(float(divisible) / 1.0f / 127.0f);
 	uint off_hi = uint(float(divisible) / 60.0f / 127.0f);
 	int offset = 0;

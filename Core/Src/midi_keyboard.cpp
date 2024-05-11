@@ -7,10 +7,7 @@
  */
 
 #include <midi_keyboard.h>
-int test1 = 0;
-int test2 = 0;
-int test3 = 0;
-int test4 = 0;
+
 // vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv for ON
 void gpioBsrr::ShLdHi_On() {
 	GPIOA->BSRR = shLdHi;

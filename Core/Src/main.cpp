@@ -189,34 +189,24 @@ void SystemClock_Config(void) {
 // extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C"
 extern "C" {
 void EXTI0_IRQHandler(void) {
-	if ((EXTI->PR1 & EXTI_PR1_PR0) == EXTI_PR1_PR0) {
 		EXTI->PR1 = extpr0;
 		keys.interrupt(interrupt0);
-	}
 }
 void EXTI1_IRQHandler(void) {
-	if ((EXTI->PR1 & EXTI_PR1_PR1) == EXTI_PR1_PR1) {
 		EXTI->PR1 = extpr1;
 		keys.interrupt(interrupt1);
-	}
 }
 void EXTI2_IRQHandler(void) {
-	if ((EXTI->PR1 & EXTI_PR1_PR2) == EXTI_PR1_PR2) {
 		EXTI->PR1 = extpr2;
 		keys.interrupt(interrupt2);
-	}
 }
 void EXTI3_IRQHandler(void) {
-	if ((EXTI->PR1 & EXTI_PR1_PR3) == EXTI_PR1_PR3) {
 		EXTI->PR1 = extpr3;
 		keys.interrupt(interrupt3);
-	}
 }
 void EXTI4_IRQHandler(void) {
-	if ((EXTI->PR1 & EXTI_PR1_PR4) == EXTI_PR1_PR4) {
 		EXTI->PR1 = extpr4;
 		keys.interrupt(interrupt4);
-	}
 }
 void EXTI9_5_IRQHandler(void) {
 	if ((EXTI->PR1 & EXTI_PR1_PR5) == EXTI_PR1_PR5) {

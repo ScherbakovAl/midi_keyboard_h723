@@ -68,7 +68,10 @@ int main(void) {
 	HAL_TIM_Base_Start(&htim2);
 	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 	LCD_Start();
+
+	//vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv управление питанием
 	if (!__HAL_PWR_GET_FLAG(PWR_FLAG_SB)) {
+//		LCD_stby?
 		HAL_Delay(500);
 		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4); //pin4 == кнопка К1 на плате
 		__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
@@ -76,9 +79,12 @@ int main(void) {
 		HAL_PWR_EnterSTANDBYMode();
 	} else {
 		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);
+//		LCD_start?
 	}
+	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ управление питанием
+
 	MX_USB_DEVICE_Init();
-	HAL_Delay(500);
+	HAL_Delay(300);
 	keys.wheel();
 
 	int a = 0;

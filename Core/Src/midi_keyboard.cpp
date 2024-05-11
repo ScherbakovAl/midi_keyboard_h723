@@ -16,19 +16,19 @@ void gpioBsrr::ShLdHi_On() {
 	GPIOA->BSRR = shLdHi;
 }
 void gpioBsrr::ShLdLo_On() {
-	GPIOA->BSRR |= shLdLo; //| убрать?
+	GPIOA->BSRR = shLdLo;
 }
 void gpioBsrr::ClkHi_On() {
-	GPIOA->BSRR |= clkHi; //| убрать?
+	GPIOA->BSRR = clkHi;
 }
 void gpioBsrr::ClkLo_On() {
 	GPIOA->BSRR = clkLo;
 }
 void gpioBsrr::AndHi_On() {
-	GPIOA->BSRR |= andOnHi; //|
+	GPIOA->BSRR |= andOnHi;
 }
 void gpioBsrr::AndLo_On() {
-	GPIOA->BSRR |= andOnLo; //|
+	GPIOA->BSRR |= andOnLo;
 }
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ for ON
 
@@ -37,10 +37,10 @@ void gpioBsrr::ShLdHi_Off() {
 	GPIOA->BSRR = shLdHi;
 }
 void gpioBsrr::ShLdLo_Off() {
-	GPIOA->BSRR |= shLdLo;
+	GPIOA->BSRR = shLdLo;
 }
 void gpioBsrr::ClkHi_Off() {
-	GPIOA->BSRR |= clkHi;
+	GPIOA->BSRR = clkHi;
 }
 void gpioBsrr::ClkLo_Off() {
 	GPIOA->BSRR = clkLo;
@@ -124,8 +124,7 @@ void Keys::wheel() {
 
 	while (1) {
 		midiOnOrOff = OnOrOff::midiOn;
-		for (uint i = 0; i < 59; ++i) {
-
+		for (uint i = 0; i < 29; ++i) {
 			maskLoadMidiOn();
 			gpio.ShLdHi_On();
 			gpio.AndLo_On();
@@ -225,8 +224,6 @@ void Keys::timerSave(const numberS &nu) {
 	if (nu.mux % 2 == 0) {
 		timer[nu.number] = Now;
 	} else {
-//		GPIOA->BSRR |= 0x8000; //for test
-//		GPIOA->BSRR |= 0x80000000; // for test
 		auto time = Now - timer[nu.number - 1];
 		timer[nu.number] = Now;
 		sendMidi(nu.number, time, offset, midiOnOrOff);
@@ -250,6 +247,10 @@ void Keys::sendMidi(cuint &nu, cuint &t, const int &ofs, OnOrOff &mO) {
 //		print(30, 39, 159, 19, 12, test2);
 //		print(60, 39, 159, 19, 12, test4);
 //		print(0, 52, 159, 19, 12, test3);
+//		GPIOA->BSRR = 0x8000; //for test
+//		GPIOA->BSRR = 0x80000000; // for test
+//		GPIOA->BSRR = 0x200; //for test
+//		GPIOA->BSRR = 0x2000000; //for test
 	}
 
 	if (m_h_o > 127) {

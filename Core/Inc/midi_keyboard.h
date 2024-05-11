@@ -116,7 +116,8 @@ private:
 //	uint max = divisible / (maxMidi * maxMidi);
 	uint off_lo = uint(float(divisible) / 1.0f / 127.0f);
 	uint off_hi = uint(float(divisible) / 60.0f / 127.0f);
-	int offset = 0;
+	int offset = -4;
+	uint prePressure = 0;
 
 	muxer mux;
 	gpioBsrr gpio;
@@ -128,7 +129,6 @@ private:
 	std::bitset<channelBits> bitsMidiOff[sizeMux];
 	uint timer[sensors] = { };
 	uint notes[sensors];
-	uint prePressure = 0;
 	uint8_t bufNotes[512] = { };
 	static cuint zero = 0;
 	static cuint one = 1;

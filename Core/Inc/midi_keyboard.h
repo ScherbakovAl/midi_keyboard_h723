@@ -72,7 +72,7 @@ public:
 
 class Note {
 public:
-	cuint hi = 0;
+	const int hi = 0;
 	cuint lo = 0;
 	cuint note = 0;
 	OnOrOff mO = OnOrOff::midiOn;

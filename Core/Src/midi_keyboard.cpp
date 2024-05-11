@@ -2,7 +2,7 @@
  * midi_keyboard.cpp
  *
  *  Created on: Sep 23, 2022
- *  edited 11.02.2024
+ *  edited 11.05.2024
  *      Author: scherbakov
  */
 
@@ -229,10 +229,10 @@ void Keys::timerSave(const numberS &nu) {
 }
 
 void Keys::sendMidi(cuint &nu, cuint &t, const int &ofs, OnOrOff &mO) {
-	auto midi_speed = divisible / t;	//~490-61700
-	auto midi_hi = midi_speed / maxMidi;
-	auto midi_lo = midi_speed - midi_hi * maxMidi;
-	auto m_h_o = midi_hi + ofs;
+	cuint midi_speed = divisible / t;	//~480-25000
+	cuint midi_hi = midi_speed / maxMidi;
+	cuint midi_lo = midi_speed - midi_hi * maxMidi;
+	int m_h_o = ((int)midi_hi) + ofs;
 	if (mO == OnOrOff::midiOn) {
 //		test1 = SysTick->VAL; //for test
 //		ST7735_LCD_Driver.FillRect(&st7735_pObj, 6, 60, 100, 20, BLACK);	//

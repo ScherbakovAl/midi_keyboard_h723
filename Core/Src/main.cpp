@@ -56,8 +56,8 @@ cuint interrupt10 = 10;
 Keys keys;
 
 const uint32_t Flash_Address = 0x08040000;
-uint32_t Data[4] = { 30, 31, 33, 34 };
-uint32_t DataRead[4] = { 26, 25, 24, 23 };
+volatile int16_t Data[4] = { 0x8, 0x8, 0x8, 0x8 };
+volatile int16_t DataRead[4] = { 26, 25, 24, 23 };
 
 int main(void) {
 //	SCB_EnableICache();
@@ -76,31 +76,32 @@ int main(void) {
 	HAL_StatusTypeDef ret = HAL_OK;
 
 	HAL_FLASH_Unlock();
-	FLASH_Erase_Sector(FLASH_SECTOR_2, FLASH_BANK_1, FLASH_VOLTAGE_RANGE_1);
+	FLASH_Erase_Sector(FLASH_SECTOR_2, FLASH_BANK_1, FLASH_VOLTAGE_RANGE_4);
 	HAL_FLASH_Lock();
 
-	HAL_Delay(100);
+//	HAL_Delay(100);
 
-
-	HAL_Delay(100);
+//	HAL_Delay(100);
 
 	HAL_FLASH_Unlock();
 	for (int p = 0; p <= 3; p++) {
-		ret = HAL_FLASH_Program(FLASH_PSIZE_WORD,
-				(Flash_Address + (p * sizeof(uint32_t))), Data[p]); // FLASH_PSIZE_BYTE; FLASH_TYPEPROGRAM_FLASHWORD; FLASH_PSIZE_WORD
+		__HAL_FLASH_CLEAR_FLAG(
+			FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGSERR | FLASH_FLAG_PGSERR);
+		DataRead[p] = HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD,
+				(Flash_Address + (p * sizeof(int64_t))), Data[p]); // FLASH_PSIZE_BYTE; FLASH_TYPEPROGRAM_FLASHWORD; FLASH_PSIZE_WORD
 	}
 	HAL_FLASH_Lock();
 
-	HAL_Delay(100);
+//	HAL_Delay(100);
 
-	HAL_FLASH_Unlock();
-	for (int e = 0; e <= 3; e++) {
-		DataRead[e] = *(volatile uint32_t*) (Flash_Address
-				+ (e * sizeof(uint32_t)));
-	}
-
-	HAL_FLASH_Lock();
-	HAL_Delay(100);
+//	HAL_FLASH_Unlock();
+//	for (int e = 0; e <= 3; e++) {
+//		DataRead[e] = *(volatile int16_t*) (Flash_Address
+//				+ (e * sizeof(int16_t)));
+//	}
+//
+//	HAL_FLASH_Lock();
+//	HAL_Delay(100);
 
 	while (1) {
 		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,

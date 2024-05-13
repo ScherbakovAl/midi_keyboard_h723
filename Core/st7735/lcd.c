@@ -60,7 +60,7 @@ void LCD_Start(void)
 
 	extern unsigned char WeActStudiologo_160_80[];
 	ST7735_LCD_Driver.DrawBitmap(&st7735_pObj,0,0,WeActStudiologo_160_80);
-	HAL_Delay(400);
+	HAL_Delay(200);
 
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
 
@@ -76,23 +76,23 @@ void LCD_Start(void)
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 110, 40, 10, 10, 0xFFFF);
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 120, 40, 10, 10, 0xF0FF);
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 130, 40, 10, 10, 0xF02F);
-	HAL_Delay(200);
+//	HAL_Delay(200);
 
-	char texxt[20];
-	int c = 5;
-	while (1)
-	{
-		a += c;
-		sprintf(texxt, "%d", a);
-		LCD_ShowString(a, a / 2 + 20, 40, 40, 16, texxt);
-		LCD_ShowString(a + 20, a / 2, 40, 40, 16, texxt);
-		//printf(buff, "1. целое число: %d \n", 1234);
-		//printf(buff, "2. дробное число: %f \n", 12.34);
-		//printf(buff, "3. 16-ричное: %X \n", 12.34);
-		HAL_Delay(15);
-		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
-		if(a > 70) return;
-	}
+//	char texxt[20];
+//	int c = 5;
+//	while (1)
+//	{
+//		a += c;
+//		sprintf(texxt, "%d", a);
+//		LCD_ShowString(a, a / 2 + 20, 40, 40, 16, texxt);
+//		LCD_ShowString(a + 20, a / 2, 40, 40, 16, texxt);
+//		//printf(buff, "1. целое число: %d \n", 1234);
+//		//printf(buff, "2. дробное число: %f \n", 12.34);
+//		//printf(buff, "3. 16-ричное: %X \n", 12.34);
+//		HAL_Delay(15);
+//		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
+//		if(a > 70) return;
+//	}
 }
 
 void LCD_SetBrightness(uint32_t Brightness)

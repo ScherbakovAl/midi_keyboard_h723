@@ -101,7 +101,7 @@ void Keys::initBitMask() {
 	}
 	bitsMidiOff[1].reset(0); //две нижние клавиши без механики
 	bitsMidiOff[3].reset(0);
-	HAL_Delay(10);
+	HAL_Delay(30);
 }
 
 void Keys::wheel() {

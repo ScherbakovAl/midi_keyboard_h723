@@ -55,9 +55,13 @@ cuint interrupt9 = 9;
 cuint interrupt10 = 10;
 Keys keys;
 
+const uint32_t Flash_Address = 0x08040000;
+uint32_t Data[4] = { 30, 31, 33, 34 };
+uint32_t DataRead[4] = { 26, 25, 24, 23 };
+
 int main(void) {
-	SCB_EnableICache();
-	SCB_EnableDCache();
+//	SCB_EnableICache();
+//	SCB_EnableDCache();
 	HAL_Init();
 	SystemClock_Config();
 	MX_GPIO_Init();
@@ -69,19 +73,60 @@ int main(void) {
 	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 	LCD_Start();
 
-	//vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv управление питанием
-	if (!__HAL_PWR_GET_FLAG(PWR_FLAG_SB)) {
-//		LCD_stby?
-		HAL_Delay(500);
-		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4); //pin4 == кнопка К1 на плате
-		__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
-		HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4);
-		HAL_PWR_EnterSTANDBYMode();
-	} else {
-		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);
-//		LCD_start?
+	HAL_StatusTypeDef ret = HAL_OK;
+
+	HAL_FLASH_Unlock();
+	FLASH_Erase_Sector(FLASH_SECTOR_2, FLASH_BANK_1, FLASH_VOLTAGE_RANGE_1);
+	HAL_FLASH_Lock();
+
+	HAL_Delay(100);
+
+
+	HAL_Delay(100);
+
+	HAL_FLASH_Unlock();
+	for (int p = 0; p <= 3; p++) {
+		ret = HAL_FLASH_Program(FLASH_PSIZE_WORD,
+				(Flash_Address + (p * sizeof(uint32_t))), Data[p]); // FLASH_PSIZE_BYTE; FLASH_TYPEPROGRAM_FLASHWORD; FLASH_PSIZE_WORD
 	}
-	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ управление питанием
+	HAL_FLASH_Lock();
+
+	HAL_Delay(100);
+
+	HAL_FLASH_Unlock();
+	for (int e = 0; e <= 3; e++) {
+		DataRead[e] = *(volatile uint32_t*) (Flash_Address
+				+ (e * sizeof(uint32_t)));
+	}
+
+	HAL_FLASH_Lock();
+	HAL_Delay(100);
+
+	while (1) {
+		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,
+				ST7735Ctx.Height, BLACK);
+		int y = 0;
+		for (int n = 0; n <= 3; n++) {
+			keys.print(0, y, 80, 60, 12, DataRead[n]);
+			y += 20;
+		}
+		keys.print(80, 40, 60, 60, 12, ret);
+		HAL_Delay(1000);
+	}
+
+//vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv управление питанием
+//	if (!__HAL_PWR_GET_FLAG(PWR_FLAG_SB)) {
+////		LCD_stby?
+//		HAL_Delay(500);
+//		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4); //pin4 == кнопка К1 на плате
+//		__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+//		HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4);
+//		HAL_PWR_EnterSTANDBYMode();
+//	} else {
+//		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);
+////		LCD_start?
+//	}
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ управление питанием
 
 	MX_USB_DEVICE_Init();
 	HAL_Delay(300);
@@ -189,24 +234,24 @@ void SystemClock_Config(void) {
 // extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C"
 extern "C" {
 void EXTI0_IRQHandler(void) {
-		EXTI->PR1 = extpr0;
-		keys.interrupt(interrupt0);
+	EXTI->PR1 = extpr0;
+	keys.interrupt(interrupt0);
 }
 void EXTI1_IRQHandler(void) {
-		EXTI->PR1 = extpr1;
-		keys.interrupt(interrupt1);
+	EXTI->PR1 = extpr1;
+	keys.interrupt(interrupt1);
 }
 void EXTI2_IRQHandler(void) {
-		EXTI->PR1 = extpr2;
-		keys.interrupt(interrupt2);
+	EXTI->PR1 = extpr2;
+	keys.interrupt(interrupt2);
 }
 void EXTI3_IRQHandler(void) {
-		EXTI->PR1 = extpr3;
-		keys.interrupt(interrupt3);
+	EXTI->PR1 = extpr3;
+	keys.interrupt(interrupt3);
 }
 void EXTI4_IRQHandler(void) {
-		EXTI->PR1 = extpr4;
-		keys.interrupt(interrupt4);
+	EXTI->PR1 = extpr4;
+	keys.interrupt(interrupt4);
 }
 void EXTI9_5_IRQHandler(void) {
 	if ((EXTI->PR1 & EXTI_PR1_PR5) == EXTI_PR1_PR5) {

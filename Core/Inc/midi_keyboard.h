@@ -96,6 +96,8 @@ public:
 			const int value);
 	void print(cuint x, cuint y, cuint width, cuint height, cuint size,
 			uint value);
+	void print(cuint x, cuint y, cuint width, cuint height, cuint size,
+			uint32_t value);
 	void printString(cuint x, cuint y, cuint width, cuint height, cuint size,
 			const std::string value);
 private:

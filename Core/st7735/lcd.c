@@ -64,18 +64,18 @@ void LCD_Start(void)
 
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
 
-	LCD_Light(100, 200);
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 110, 20, 10, 10, 0xFFFF);
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 120, 20, 10, 10, 0xF0FF);
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 130, 20, 10, 10, 0xF02F);
-	LCD_Light(0, 300);
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 110, 30, 10, 10, 0xFFFF);
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 120, 30, 10, 10, 0xF0FF);
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 130, 30, 10, 10, 0xF02F);
-	LCD_Light(100, 200);
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 110, 40, 10, 10, 0xFFFF);
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 120, 40, 10, 10, 0xF0FF);
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 130, 40, 10, 10, 0xF02F);
+//	LCD_Light(100, 200);
+//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 110, 20, 10, 10, 0xFFFF);
+//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 120, 20, 10, 10, 0xF0FF);
+//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 130, 20, 10, 10, 0xF02F);
+//	LCD_Light(0, 300);
+//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 110, 30, 10, 10, 0xFFFF);
+//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 120, 30, 10, 10, 0xF0FF);
+//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 130, 30, 10, 10, 0xF02F);
+//	LCD_Light(100, 200);
+//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 110, 40, 10, 10, 0xFFFF);
+//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 120, 40, 10, 10, 0xF0FF);
+//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 130, 40, 10, 10, 0xF02F);
 //	HAL_Delay(200);
 
 //	char texxt[20];

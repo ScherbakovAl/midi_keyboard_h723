@@ -55,10 +55,6 @@ cuint interrupt9 = 9;
 cuint interrupt10 = 10;
 Keys keys;
 
-const uint32_t Flash_Address = 0x08040000;
-volatile int16_t Data[4] = { 0x8, 0x8, 0x8, 0x8 };
-volatile int16_t DataRead[4] = { 26, 25, 24, 23 };
-
 int main(void) {
 //	SCB_EnableICache();
 //	SCB_EnableDCache();
@@ -73,47 +69,50 @@ int main(void) {
 	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 	LCD_Start();
 
-	HAL_StatusTypeDef ret = HAL_OK;
+	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv MEMORY
+	const uint32_t Flash_Address = 0x08040000;
+	uint32_t Data[4] = { 0, 0, 0, 0 };
+//	const char Teststr3[] = "00112233445566778899AABBCCDDEEFFC0C1C2C3C4C5C6C7C8C9CACBCCCDCECF";
+	uint32_t DataRead[4] = { 26, 25, 24, 23 };
+	int err[4] = { };
 
 	HAL_FLASH_Unlock();
 	FLASH_Erase_Sector(FLASH_SECTOR_2, FLASH_BANK_1, FLASH_VOLTAGE_RANGE_4);
 	HAL_FLASH_Lock();
 
-//	HAL_Delay(100);
-
-//	HAL_Delay(100);
-
 	HAL_FLASH_Unlock();
-	for (int p = 0; p <= 3; p++) {
-		__HAL_FLASH_CLEAR_FLAG(
-			FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGSERR | FLASH_FLAG_PGSERR);
-		DataRead[p] = HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD,
-				(Flash_Address + (p * sizeof(int64_t))), Data[p]); // FLASH_PSIZE_BYTE; FLASH_TYPEPROGRAM_FLASHWORD; FLASH_PSIZE_WORD
+	for (int p = 0; p < 4; p++) {
+//		__HAL_FLASH_CLEAR_FLAG(
+//			FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGSERR | FLASH_FLAG_PGSERR);
+		err[p] = HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD,
+				(Flash_Address + (p * sizeof(uint32_t)) * 8),
+				Data[p]); // FLASH_PSIZE_BYTE; FLASH_TYPEPROGRAM_FLASHWORD; FLASH_PSIZE_WORD
+//		err[p] = HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD,
+//				(Flash_Address + (p * sizeof(uint32_t)) * 8),
+//				(uint32_t) Teststr3);
 	}
 	HAL_FLASH_Lock();
 
-//	HAL_Delay(100);
-
-//	HAL_FLASH_Unlock();
-//	for (int e = 0; e <= 3; e++) {
-//		DataRead[e] = *(volatile int16_t*) (Flash_Address
-//				+ (e * sizeof(int16_t)));
-//	}
-//
-//	HAL_FLASH_Lock();
-//	HAL_Delay(100);
+	HAL_FLASH_Unlock();
+	for (int e = 0; e < 4; e++) {
+		DataRead[e] = *(volatile uint32_t*) (Flash_Address
+				+ (e * sizeof(uint32_t)) * 8);
+	}
+	HAL_FLASH_Lock();
 
 	while (1) {
 		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,
 				ST7735Ctx.Height, BLACK);
 		int y = 0;
-		for (int n = 0; n <= 3; n++) {
-			keys.print(0, y, 80, 60, 12, DataRead[n]);
+		for (int n = 0; n < 4; n++) {
+			keys.print(0, y, 120, 60, 12, DataRead[n]);
+			keys.print(122, y, 60, 60, 12, err[n]);
 			y += 20;
 		}
-		keys.print(80, 40, 60, 60, 12, ret);
 		HAL_Delay(1000);
 	}
+
+	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ MEMORY
 
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv управление питанием
 //	if (!__HAL_PWR_GET_FLAG(PWR_FLAG_SB)) {

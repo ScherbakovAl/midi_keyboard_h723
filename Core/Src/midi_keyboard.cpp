@@ -490,6 +490,12 @@ void Keys::print(cuint x, cuint y, cuint width, cuint height, cuint size,
 	LCD_ShowString(x, y, width, height, size, (int8_t*) u.c_str());
 }
 
+void Keys::print(cuint x, cuint y, cuint width, cuint height, cuint size,
+		uint32_t value) {
+	const std::string u = std::to_string(value);
+	LCD_ShowString(x, y, width, height, size, (int8_t*) u.c_str());
+}
+
 void Keys::printString(cuint x, cuint y, cuint width, cuint height, cuint size,
 		const std::string value) {
 	LCD_ShowString(x, y, width, height, size, (int8_t*) value.c_str());

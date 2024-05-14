@@ -69,7 +69,7 @@ int main(void) {
 	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 	LCD_Start();
 
-	//vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv управление питанием
+//vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv управление питанием
 	if (!__HAL_PWR_GET_FLAG(PWR_FLAG_SB)) {
 //		LCD_stby?
 		HAL_Delay(500);
@@ -81,63 +81,13 @@ int main(void) {
 		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);
 //		LCD_start?
 	}
-	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ управление питанием
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ управление питанием
 
 	MX_USB_DEVICE_Init();
 	HAL_Delay(300);
 	keys.wheel();
 
-	int a = 0;
-	int n = 0;
-	int x = 50;
-	int y = 50;
-	int pC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
-	int cC = pC;
-	int tim_t = 0;
-
 	while (1) {
-		if ((GPIOC->IDR & GPIO_PIN_4) == 0x00U) {
-			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,
-					ST7735Ctx.Height, BLACK);
-			keys.print(x, y, 60, 60, 12, 0);
-			if (n) {
-				n = 0;
-			} else {
-				n = 1;
-			}
-			HAL_Delay(200);
-		}
-
-		cC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
-		keys.print(0, 0, 60, 60, 12, n);
-		keys.print(50, 0, 60, 60, 12, x);
-		keys.print(100, 0, 60, 60, 12, y);
-
-		if (cC != pC) {
-			keys.print(0, 70, 60, 60, 12, cC);
-//			ST7735_SetPixel(&st7735_pObj, cC, 0, WHITE);
-			if (!n) {
-				if (cC < pC) {
-					--x;
-				} else {
-					++x;
-				}
-			} else {
-				if (cC < pC) {
-					--y;
-				} else {
-					++y;
-				}
-			}
-			keys.print(x, y, 60, 60, 12, 0);
-			pC = cC;
-		}
-
-		if (TIM2->CNT - tim_t > 500000) {
-			tim_t = TIM2->CNT;
-			keys.print(0, 40, x, y, 16, 1234567890);
-			++a;
-		}
 	}
 }
 
@@ -189,24 +139,24 @@ void SystemClock_Config(void) {
 // extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C" extern "C"
 extern "C" {
 void EXTI0_IRQHandler(void) {
-		EXTI->PR1 = extpr0;
-		keys.interrupt(interrupt0);
+	EXTI->PR1 = extpr0;
+	keys.interrupt(interrupt0);
 }
 void EXTI1_IRQHandler(void) {
-		EXTI->PR1 = extpr1;
-		keys.interrupt(interrupt1);
+	EXTI->PR1 = extpr1;
+	keys.interrupt(interrupt1);
 }
 void EXTI2_IRQHandler(void) {
-		EXTI->PR1 = extpr2;
-		keys.interrupt(interrupt2);
+	EXTI->PR1 = extpr2;
+	keys.interrupt(interrupt2);
 }
 void EXTI3_IRQHandler(void) {
-		EXTI->PR1 = extpr3;
-		keys.interrupt(interrupt3);
+	EXTI->PR1 = extpr3;
+	keys.interrupt(interrupt3);
 }
 void EXTI4_IRQHandler(void) {
-		EXTI->PR1 = extpr4;
-		keys.interrupt(interrupt4);
+	EXTI->PR1 = extpr4;
+	keys.interrupt(interrupt4);
 }
 void EXTI9_5_IRQHandler(void) {
 	if ((EXTI->PR1 & EXTI_PR1_PR5) == EXTI_PR1_PR5) {
@@ -236,12 +186,6 @@ void EXTI15_10_IRQHandler(void) {
 		EXTI->PR1 = extpr10;
 		keys.interrupt(interrupt10);
 	}
-}
-
-extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
-
-void OTG_FS_IRQHandler(void) {
-	HAL_PCD_IRQHandler(&hpcd_USB_OTG_FS);
 }
 } // extern "C"
 

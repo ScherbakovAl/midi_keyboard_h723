@@ -109,7 +109,13 @@ private:
 	void timerSave(const numberS &nu);
 	void sendMidi(cuint &nu, cuint &t, const int &ofS, OnOrOff &mO);
 	void displayOperations();
+	void SaveToMemory();
+	void MemoryRead();
 
+	cuint KeyMemoryTest = 123456;
+	cuint Flash_Address = 0x08040000;
+	volatile uint Data[8] = { };
+	uint DataRead[8] = { };
 	static cuint sensors = 176;
 	static cuint channelBits = 11;
 	static cuint sizeMux = 16;

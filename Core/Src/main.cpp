@@ -56,8 +56,8 @@ cuint interrupt10 = 10;
 Keys keys;
 
 int main(void) {
-//	SCB_EnableICache();
-//	SCB_EnableDCache();
+	SCB_EnableICache();
+	SCB_EnableDCache();
 	HAL_Init();
 	SystemClock_Config();
 	MX_GPIO_Init();
@@ -69,120 +69,25 @@ int main(void) {
 	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 	LCD_Start();
 
-	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv MEMORY
-	const uint32_t Flash_Address = 0x08040000;
-	uint32_t Data[4] = { 0, 0, 0, 0 };
-//	const char Teststr3[] = "00112233445566778899AABBCCDDEEFFC0C1C2C3C4C5C6C7C8C9CACBCCCDCECF";
-	uint32_t DataRead[4] = { 26, 25, 24, 23 };
-	int err[4] = { };
-
-	HAL_FLASH_Unlock();
-	FLASH_Erase_Sector(FLASH_SECTOR_2, FLASH_BANK_1, FLASH_VOLTAGE_RANGE_4);
-	HAL_FLASH_Lock();
-
-	HAL_FLASH_Unlock();
-	for (int p = 0; p < 4; p++) {
-//		__HAL_FLASH_CLEAR_FLAG(
-//			FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGSERR | FLASH_FLAG_PGSERR);
-		err[p] = HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD,
-				(Flash_Address + (p * sizeof(uint32_t)) * 8),
-				Data[p]); // FLASH_PSIZE_BYTE; FLASH_TYPEPROGRAM_FLASHWORD; FLASH_PSIZE_WORD
-//		err[p] = HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD,
-//				(Flash_Address + (p * sizeof(uint32_t)) * 8),
-//				(uint32_t) Teststr3);
-	}
-	HAL_FLASH_Lock();
-
-	HAL_FLASH_Unlock();
-	for (int e = 0; e < 4; e++) {
-		DataRead[e] = *(volatile uint32_t*) (Flash_Address
-				+ (e * sizeof(uint32_t)) * 8);
-	}
-	HAL_FLASH_Lock();
-
-	while (1) {
-		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,
-				ST7735Ctx.Height, BLACK);
-		int y = 0;
-		for (int n = 0; n < 4; n++) {
-			keys.print(0, y, 120, 60, 12, DataRead[n]);
-			keys.print(122, y, 60, 60, 12, err[n]);
-			y += 20;
-		}
-		HAL_Delay(1000);
-	}
-
-	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ MEMORY
-
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv управление питанием
-//	if (!__HAL_PWR_GET_FLAG(PWR_FLAG_SB)) {
-////		LCD_stby?
-//		HAL_Delay(500);
-//		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4); //pin4 == кнопка К1 на плате
-//		__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
-//		HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4);
-//		HAL_PWR_EnterSTANDBYMode();
-//	} else {
-//		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);
-////		LCD_start?
-//	}
+	if (!__HAL_PWR_GET_FLAG(PWR_FLAG_SB)) {
+//		LCD_stby?
+		HAL_Delay(500);
+		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4); //pin4 == кнопка К1 на плате
+		__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+		HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4);
+		HAL_PWR_EnterSTANDBYMode();
+	} else {
+		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);
+//		LCD_start?
+	}
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ управление питанием
 
 	MX_USB_DEVICE_Init();
 	HAL_Delay(300);
 	keys.wheel();
 
-	int a = 0;
-	int n = 0;
-	int x = 50;
-	int y = 50;
-	int pC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
-	int cC = pC;
-	int tim_t = 0;
-
 	while (1) {
-		if ((GPIOC->IDR & GPIO_PIN_4) == 0x00U) {
-			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,
-					ST7735Ctx.Height, BLACK);
-			keys.print(x, y, 60, 60, 12, 0);
-			if (n) {
-				n = 0;
-			} else {
-				n = 1;
-			}
-			HAL_Delay(200);
-		}
-
-		cC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
-		keys.print(0, 0, 60, 60, 12, n);
-		keys.print(50, 0, 60, 60, 12, x);
-		keys.print(100, 0, 60, 60, 12, y);
-
-		if (cC != pC) {
-			keys.print(0, 70, 60, 60, 12, cC);
-//			ST7735_SetPixel(&st7735_pObj, cC, 0, WHITE);
-			if (!n) {
-				if (cC < pC) {
-					--x;
-				} else {
-					++x;
-				}
-			} else {
-				if (cC < pC) {
-					--y;
-				} else {
-					++y;
-				}
-			}
-			keys.print(x, y, 60, 60, 12, 0);
-			pC = cC;
-		}
-
-		if (TIM2->CNT - tim_t > 500000) {
-			tim_t = TIM2->CNT;
-			keys.print(0, 40, x, y, 16, 1234567890);
-			++a;
-		}
 	}
 }
 
@@ -281,12 +186,6 @@ void EXTI15_10_IRQHandler(void) {
 		EXTI->PR1 = extpr10;
 		keys.interrupt(interrupt10);
 	}
-}
-
-extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
-
-void OTG_FS_IRQHandler(void) {
-	HAL_PCD_IRQHandler(&hpcd_USB_OTG_FS);
 }
 } // extern "C"
 

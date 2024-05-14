@@ -109,7 +109,9 @@ void Keys::wheel() {
 	initBitMask();
 	mux.setSizeMux(sizeM);
 	__HAL_TIM_SET_COUNTER(&htim3, 32760);
+	MemoryRead();
 	gpio.Enable_Qre1113();
+	HAL_Delay(300);
 //	SysTick->CTRL = 0;
 	print(6, 0, 60, 19, 16, divisible);
 	print(6, 20, 60, 19, 16, offset);
@@ -232,7 +234,7 @@ void Keys::sendMidi(cuint &nu, cuint &t, const int &ofs, OnOrOff &mO) {
 	cuint midi_speed = divisible / t;	//~480-25000
 	cuint midi_hi = midi_speed / maxMidi;
 	cuint midi_lo = midi_speed - midi_hi * maxMidi;
-	int m_h_o = ((int)midi_hi) + ofs;
+	int m_h_o = ((int) midi_hi) + ofs;
 	if (mO == OnOrOff::midiOn) {
 //		test1 = SysTick->VAL; //for test
 //		ST7735_LCD_Driver.FillRect(&st7735_pObj, 6, 60, 100, 20, BLACK);	//
@@ -467,7 +469,7 @@ void Keys::displayOperations() {
 //	max = divisible / (maxMidi * maxMidi);
 	off_lo = uint(float(divisible) / 1.0f / 127.0f);
 	off_hi = uint(float(divisible) / 60.0f / 127.0f);
-
+	SaveToMemory();
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
 	print(6, 0, 60, 19, 16, divisible);
 	print(6, 20, 60, 19, 16, offset);
@@ -516,3 +518,88 @@ uint muxer::get() const {
 void muxer::setSizeMux(cuint &s) {
 	size = s;
 }
+
+void Keys::SaveToMemory() {
+	Data[0] = KeyMemoryTest;
+	Data[1] = divisible;
+	Data[2] = (uint) offset;
+	Data[3] = prePressure;
+
+	SCB_DisableICache();
+	SCB_DisableDCache();
+	HAL_FLASH_Unlock();
+
+	FLASH_Erase_Sector(FLASH_SECTOR_2, FLASH_BANK_1, FLASH_VOLTAGE_RANGE_4);
+	HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD, Flash_Address,
+			(uint32_t) &Data);
+
+	HAL_FLASH_Lock();
+	SCB_EnableICache();
+	SCB_EnableDCache();
+
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x4444);
+	printString(40, 10, 120, 20, 16, "Saved!");
+	HAL_Delay(1200);
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
+}
+
+void Keys::MemoryRead() {
+	if ((*(volatile uint32_t*) Flash_Address) != KeyMemoryTest) {
+		SaveToMemory();
+
+		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x4444);
+		printString(40, 10, 120, 20, 16, "MemoryRead->SaveToMemory");
+		HAL_Delay(1200);
+		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
+	} else {
+		for (uint32_t e = 0; e < 8; e++) {
+			DataRead[e] = *(volatile uint32_t*) (Flash_Address
+					+ (e * sizeof(uint32_t)));
+		}
+		divisible = DataRead[1];
+		offset = (int) DataRead[2];
+		prePressure = DataRead[3];
+
+		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x4444);
+		printString(40, 10, 120, 20, 16, "Data restored!");
+		HAL_Delay(1200);
+		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
+	}
+}
+
+/*{
+ HAL_FLASH_Unlock();
+ FLASH_Erase_Sector(FLASH_SECTOR_2, FLASH_BANK_1, FLASH_VOLTAGE_RANGE_4);
+ HAL_FLASH_Lock();
+
+ HAL_FLASH_Unlock();
+ //	for (uint32_t p = 0; p < 4; p++) {
+ ////		__HAL_FLASH_CLEAR_FLAG(
+ ////			FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGSERR | FLASH_FLAG_PGSERR);
+ uint32_t p = 0;// записывать можно страницами размером p * 8 ("uint32_t naprimer [8]")
+ HAL_FLASH_Program(FLASH_TYPEPROGRAM_FLASHWORD,
+ (Flash_Address + (p * sizeof(uint32_t)) * 8), (uint32_t) &Data);
+ //	}
+ HAL_FLASH_Lock();
+
+ HAL_FLASH_Unlock();
+ for (uint32_t e = 0; e < 8; e++) {
+ DataRead[e] = *(volatile uint32_t*) (Flash_Address
+ + (e * sizeof(uint32_t)));
+ }
+ HAL_FLASH_Lock();
+
+ SCB_EnableICache();
+ SCB_EnableDCache();
+
+ while (1) {
+ ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,
+ ST7735Ctx.Height, BLACK);
+ int y = 0;
+ for (int n = 0; n < 4; n++) {
+ keys.print(0, y, 120, 60, 12, DataRead[n]);
+ keys.print(100, y, 120, 60, 12, DataRead[n + 4]);
+ y += 20;
+
+ }*/
+

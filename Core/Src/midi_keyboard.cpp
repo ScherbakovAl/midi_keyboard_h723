@@ -110,7 +110,7 @@ void Keys::wheel() {
 	mux.setSizeMux(sizeM);
 	__HAL_TIM_SET_COUNTER(&htim3, 32760);
 	MemoryRead();
-	gpio.Enable_Qre1113();
+//	gpio.Enable_Qre1113();
 	HAL_Delay(300);
 	printMenu(BLACK);
 

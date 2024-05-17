@@ -64,7 +64,7 @@ int main(void) {
 	MX_SPI4_Init();
 	MX_TIM1_Init();
 	MX_TIM3_Init();
-	MX_TIM2_Init();
+	MX_TIM2_Init();//4294967295
 	HAL_TIM_Base_Start(&htim2);
 	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 	LCD_Start();

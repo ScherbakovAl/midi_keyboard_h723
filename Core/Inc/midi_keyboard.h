@@ -113,6 +113,7 @@ private:
 	void SaveToMemory();
 	void MemoryRead();
 	int checkMemory();
+	void to_sleep();
 
 	cuint KeyMemoryTest = 123456;
 	cuint Flash_Address = 0x08040000;
@@ -129,6 +130,8 @@ private:
 	uint off_hi = uint(float(divisible) / 60.0f / 127.0f);
 	int offset = -4;
 	uint prePressure = 0;
+	uint amountOfWork = 0;
+	uint autoStandby = 0;
 
 	muxer mux;
 	gpioBsrr gpio;

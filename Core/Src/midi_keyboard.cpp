@@ -110,11 +110,12 @@ void Keys::wheel() {
 	mux.setSizeMux(sizeM);
 	__HAL_TIM_SET_COUNTER(&htim3, 32760);
 	MemoryRead();
-//	gpio.Enable_Qre1113();
+	gpio.Enable_Qre1113();
 	HAL_Delay(300);
 	printMenu(BLACK);
 
 	while (1) {
+		++autoStandby;
 		midiOnOrOff = OnOrOff::midiOn;
 		for (uint i = 0; i < 29; ++i) {
 			maskLoadMidiOn();
@@ -165,15 +166,18 @@ void Keys::maskLoadMidiOff() {
 }
 
 void Keys::check() {
+	amountOfWork = 0;
 	if (!dequeOn.empty()) {
 		auto &f = dequeOn.front();
 		if (TIM2->CNT - timer[f.number] > timeToCleanUp) {
 			bitsMidiOn[f.mux].set(f.cha);
 			dequeOn.pop_front();
 		}
+		++amountOfWork;
 	}
 	if (!dequeNotes.empty()) {
 		MidiSender(dequeNotes, bufNotes);
+		++amountOfWork;
 	}
 	if (!dequeLed.empty()) {
 		auto &l = dequeLed.front();
@@ -181,14 +185,22 @@ void Keys::check() {
 			gpio.Disable_BlueLed();
 			dequeLed.pop_front();
 		}
+		++amountOfWork;
 	}
 	if ((GPIOC->IDR & GPIO_PIN_4) == 0x00U) {
 		HAL_Delay(200);
 		displayOperations();
 	}
+	if (TIM2->CNT > 4'094'967'295 && amountOfWork == 0) {
+		TIM2->CNT = 0;
+	}
+	if (autoStandby > 8'000'000) {
+		to_sleep();
+	}
 }
 
 void Keys::interrupt(cuint &channel) {
+	autoStandby = 0;
 	numberS nu;
 	nu.set(channel, mux.get());
 	if (midiOnOrOff == OnOrOff::midiOn) {
@@ -415,6 +427,15 @@ uint muxer::get() const {
 
 void muxer::setSizeMux(cuint &s) {
 	size = s;
+}
+
+void Keys::to_sleep() {
+	gpio.Disable_Qre1113();
+	LCD_stby();
+	HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);
+	__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+	HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4);
+	HAL_PWR_EnterSTANDBYMode();
 }
 
 void Keys::SaveToMemory() {

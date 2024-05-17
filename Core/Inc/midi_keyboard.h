@@ -92,12 +92,12 @@ class Keys {
 public:
 	void wheel();
 	void interrupt(cuint &channel);
+	template<typename T>
 	void print(cuint x, cuint y, cuint width, cuint height, cuint size,
-			const int value);
-	void print(cuint x, cuint y, cuint width, cuint height, cuint size,
-			uint value);
-	void print(cuint x, cuint y, cuint width, cuint height, cuint size,
-			uint32_t value);
+			T value) {
+		const std::string u = std::to_string(value);
+		LCD_ShowString(x, y, width, height, size, (int8_t*) u.c_str());
+	}
 	void printString(cuint x, cuint y, cuint width, cuint height, cuint size,
 			const std::string value);
 private:
@@ -109,8 +109,10 @@ private:
 	void timerSave(const numberS &nu);
 	void sendMidi(cuint &nu, cuint &t, const int &ofS, OnOrOff &mO);
 	void displayOperations();
+	void printMenu(uint background);
 	void SaveToMemory();
 	void MemoryRead();
+	int checkMemory();
 
 	cuint KeyMemoryTest = 123456;
 	cuint Flash_Address = 0x08040000;
@@ -123,7 +125,6 @@ private:
 	cuint maxMidi = 127;
 	uint divisible = 7'900'000;
 	uint timeToCleanUp = uint(float(divisible) / 1.1f / 127.0f);
-//	uint max = divisible / (maxMidi * maxMidi);
 	uint off_lo = uint(float(divisible) / 1.0f / 127.0f);
 	uint off_hi = uint(float(divisible) / 60.0f / 127.0f);
 	int offset = -4;

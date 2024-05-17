@@ -67,19 +67,17 @@ int main(void) {
 	MX_TIM2_Init();//4294967295
 	HAL_TIM_Base_Start(&htim2);
 	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-	LCD_Start();
 
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv управление питанием
 	if (!__HAL_PWR_GET_FLAG(PWR_FLAG_SB)) {
-//		LCD_stby?
-		HAL_Delay(500);
+		LCD_stby();
 		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4); //pin4 == кнопка К1 на плате
 		__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
 		HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4);
 		HAL_PWR_EnterSTANDBYMode();
 	} else {
 		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);
-//		LCD_start?
+		LCD_start();
 	}
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ управление питанием
 

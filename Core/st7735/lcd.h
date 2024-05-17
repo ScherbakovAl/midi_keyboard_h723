@@ -30,7 +30,9 @@ extern uint16_t POINT_COLOR;
 extern uint16_t BACK_COLOR;
 
 
-void LCD_Start(void);
+void LCD_Init(void);
+void LCD_stby();
+void LCD_start();
 void LCD_SetBrightness(uint32_t Brightness);
 uint32_t LCD_GetBrightness(void);
 void LCD_Light(uint32_t Brightness_Dis,uint32_t time);

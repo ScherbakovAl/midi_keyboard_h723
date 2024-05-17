@@ -112,14 +112,7 @@ void Keys::wheel() {
 	MemoryRead();
 	gpio.Enable_Qre1113();
 	HAL_Delay(300);
-//	SysTick->CTRL = 0;
-	print(6, 0, 60, 19, 16, divisible);
-	print(6, 20, 60, 19, 16, offset);
-	if (prePressure) {
-		printString(6, 40, 150, 19, 16, "prePressure ON");
-	} else {
-		printString(6, 40, 150, 19, 16, "prePressure OFF");
-	}
+	printMenu(BLACK);
 
 	while (1) {
 		midiOnOrOff = OnOrOff::midiOn;
@@ -236,20 +229,6 @@ void Keys::sendMidi(cuint &nu, cuint &t, const int &ofs, OnOrOff &mO) {
 	cuint midi_lo = midi_speed - midi_hi * maxMidi;
 	int m_h_o = ((int) midi_hi) + ofs;
 	if (mO == OnOrOff::midiOn) {
-//		test1 = SysTick->VAL; //for test
-//		ST7735_LCD_Driver.FillRect(&st7735_pObj, 6, 60, 100, 20, BLACK);	//
-//		print(0, 0, 159, 19, 12, t);
-//		print(0, 13, 159, 19, 12, midi_speed);
-//		print(0, 26, 159, 19, 12, midi_hi);
-//		print(30, 26, 159, 19, 12, midi_lo);
-//		print(6, 60, 159, 19, 12, test2);//
-//		print(30, 39, 159, 19, 12, test2);
-//		print(60, 39, 159, 19, 12, test4);
-//		print(0, 52, 159, 19, 12, test3);
-//		GPIOA->BSRR = 0x8000; //for test
-//		GPIOA->BSRR = 0x80000000; // for test
-//		GPIOA->BSRR = 0x200; //for test
-//		GPIOA->BSRR = 0x2000000; //for test
 	}
 
 	if (m_h_o > 127) {
@@ -268,29 +247,15 @@ void Keys::sendMidi(cuint &nu, cuint &t, const int &ofs, OnOrOff &mO) {
 void Keys::displayOperations() {
 
 	int e = 0;
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x2222);
-	print(6, 0, 60, 19, 16, divisible);
-	print(6, 20, 60, 19, 16, offset);
-	if (prePressure) {
-		printString(6, 40, 150, 19, 16, "prePressure ON");
-	} else {
-		printString(6, 40, 150, 19, 16, "prePressure OFF");
-	}
+	printMenu(0x2222);
 	cC = pC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
 	int t = TIM2->CNT;
 
 	while (TIM2->CNT - t < 3000000) {
 		if (e == 0) {
-			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x2222);
+			printMenu(0x2222);
 			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 6, 3, 3,
 			RED);
-			print(6, 0, 60, 19, 16, divisible);
-			print(6, 20, 60, 19, 16, offset);
-			if (prePressure) {
-				printString(6, 40, 150, 19, 16, "prePressure ON");
-			} else {
-				printString(6, 40, 150, 19, 16, "prePressure OFF");
-			}
 			t = TIM2->CNT;
 			while (TIM2->CNT - t < 3000000) {
 				cC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
@@ -298,30 +263,14 @@ void Keys::displayOperations() {
 					t = TIM2->CNT;
 					if (cC < pC) {
 						divisible -= 100000;
-						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79,
-								0x2222);
+						printMenu(0x2222);
 						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 6, 3, 3,
 						RED);
-						print(6, 0, 60, 19, 16, divisible);
-						print(6, 20, 60, 19, 16, offset);
-						if (prePressure) {
-							printString(6, 40, 150, 19, 16, "prePressure ON");
-						} else {
-							printString(6, 40, 150, 19, 16, "prePressure OFF");
-						}
 					} else {
 						divisible += 100000;
-						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79,
-								0x2222);
+						printMenu(0x2222);
 						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 6, 3, 3,
 						RED);
-						print(6, 0, 60, 19, 16, divisible);
-						print(6, 20, 60, 19, 16, offset);
-						if (prePressure) {
-							printString(6, 40, 150, 19, 16, "prePressure ON");
-						} else {
-							printString(6, 40, 150, 19, 16, "prePressure OFF");
-						}
 					}
 					pC = cC;
 				}
@@ -334,16 +283,9 @@ void Keys::displayOperations() {
 		}
 
 		if (e == 1) {
-			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x2222);
+			printMenu(0x2222);
 			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 26, 3, 3,
 			RED);
-			print(6, 0, 60, 19, 16, divisible);
-			print(6, 20, 60, 19, 16, offset);
-			if (prePressure) {
-				printString(6, 40, 150, 19, 16, "prePressure ON");
-			} else {
-				printString(6, 40, 150, 19, 16, "prePressure OFF");
-			}
 			t = TIM2->CNT;
 			while (TIM2->CNT - t < 3000000) {
 				cC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
@@ -351,30 +293,14 @@ void Keys::displayOperations() {
 					t = TIM2->CNT;
 					if (cC < pC) {
 						--offset;
-						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79,
-								0x2222);
+						printMenu(0x2222);
 						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 26, 3, 3,
 						RED);
-						print(6, 0, 60, 19, 16, divisible);
-						print(6, 20, 60, 19, 16, offset);
-						if (prePressure) {
-							printString(6, 40, 150, 19, 16, "prePressure ON");
-						} else {
-							printString(6, 40, 150, 19, 16, "prePressure OFF");
-						}
 					} else {
 						++offset;
-						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79,
-								0x2222);
+						printMenu(0x2222);
 						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 26, 3, 3,
 						RED);
-						print(6, 0, 60, 19, 16, divisible);
-						print(6, 20, 60, 19, 16, offset);
-						if (prePressure) {
-							printString(6, 40, 150, 19, 16, "prePressure ON");
-						} else {
-							printString(6, 40, 150, 19, 16, "prePressure OFF");
-						}
 					}
 					pC = cC;
 				}
@@ -387,16 +313,9 @@ void Keys::displayOperations() {
 		}
 
 		if (e == 2) {
-			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x2222);
+			printMenu(0x2222);
 			ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 46, 3, 3,
 			RED);
-			print(6, 0, 60, 19, 16, divisible);
-			print(6, 20, 60, 19, 16, offset);
-			if (prePressure) {
-				printString(6, 40, 150, 19, 16, "prePressure ON");
-			} else {
-				printString(6, 40, 150, 19, 16, "prePressure OFF");
-			}
 			t = TIM2->CNT;
 			while (TIM2->CNT - t < 3000000) {
 				cC = __HAL_TIM_GET_COUNTER(&htim3) / 2;
@@ -404,22 +323,14 @@ void Keys::displayOperations() {
 					t = TIM2->CNT;
 					if (cC < pC) {
 						prePressure = 0;
-						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79,
-								0x2222);
+						printMenu(0x2222);
 						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 46, 3, 3,
 						RED);
-						print(6, 0, 60, 19, 16, divisible);
-						print(6, 20, 60, 19, 16, offset);
-						printString(6, 40, 150, 19, 16, "prePressure OFF");
 					} else {
 						prePressure = 1;
-						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79,
-								0x2222);
+						printMenu(0x2222);
 						ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 46, 3, 3,
 						RED);
-						print(6, 0, 60, 19, 16, divisible);
-						print(6, 20, 60, 19, 16, offset);
-						printString(6, 40, 150, 19, 16, "prePressure ON");
 					}
 					pC = cC;
 				}
@@ -466,11 +377,16 @@ void Keys::displayOperations() {
 	}	//while
 
 	timeToCleanUp = uint(float(divisible) / 1.1f / 127.0f);
-//	max = divisible / (maxMidi * maxMidi);
 	off_lo = uint(float(divisible) / 1.0f / 127.0f);
 	off_hi = uint(float(divisible) / 60.0f / 127.0f);
-	SaveToMemory();
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
+	if (checkMemory()) {
+		SaveToMemory();
+	}
+	printMenu(BLACK);
+}
+
+void Keys::printMenu(uint background) {
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, background);
 	print(6, 0, 60, 19, 16, divisible);
 	print(6, 20, 60, 19, 16, offset);
 	if (prePressure) {
@@ -478,24 +394,6 @@ void Keys::displayOperations() {
 	} else {
 		printString(6, 40, 150, 19, 16, "prePressure OFF");
 	}
-}
-
-void Keys::print(cuint x, cuint y, cuint width, cuint height, cuint size,
-		const int value) {
-	const std::string u = std::to_string(value);
-	LCD_ShowString(x, y, width, height, size, (int8_t*) u.c_str());
-}
-
-void Keys::print(cuint x, cuint y, cuint width, cuint height, cuint size,
-		uint value) {
-	const std::string u = std::to_string(value);
-	LCD_ShowString(x, y, width, height, size, (int8_t*) u.c_str());
-}
-
-void Keys::print(cuint x, cuint y, cuint width, cuint height, cuint size,
-		uint32_t value) {
-	const std::string u = std::to_string(value);
-	LCD_ShowString(x, y, width, height, size, (int8_t*) u.c_str());
 }
 
 void Keys::printString(cuint x, cuint y, cuint width, cuint height, cuint size,
@@ -539,17 +437,16 @@ void Keys::SaveToMemory() {
 
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x4444);
 	printString(40, 10, 120, 20, 16, "Saved!");
-	HAL_Delay(1200);
+	HAL_Delay(800);
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
 }
 
 void Keys::MemoryRead() {
 	if ((*(volatile uint32_t*) Flash_Address) != KeyMemoryTest) {
 		SaveToMemory();
-
 		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x4444);
-		printString(40, 10, 120, 20, 16, "MemoryRead->SaveToMemory");
-		HAL_Delay(1200);
+		printString(10, 10, 120, 20, 16, "MemoryRead->SaveToMemory");
+		HAL_Delay(800);
 		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
 	} else {
 		for (uint32_t e = 0; e < 8; e++) {
@@ -562,11 +459,28 @@ void Keys::MemoryRead() {
 
 		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x4444);
 		printString(40, 10, 120, 20, 16, "Data restored!");
-		HAL_Delay(1200);
+		HAL_Delay(800);
 		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
 	}
 }
 
+int Keys::checkMemory() {
+	int f = 0;
+	for (uint32_t e = 0; e < 8; e++) {
+		DataRead[e] = *(volatile uint32_t*) (Flash_Address
+				+ (e * sizeof(uint32_t)));
+	}
+	if (divisible != DataRead[1]) {
+		f = 1;
+	}
+	if (offset != DataRead[2]) {
+		f = 1;
+	}
+	if (prePressure != DataRead[3]) {
+		f = 1;
+	}
+	return f;
+}
 /*{
  HAL_FLASH_Unlock();
  FLASH_Erase_Sector(FLASH_SECTOR_2, FLASH_BANK_1, FLASH_VOLTAGE_RANGE_4);

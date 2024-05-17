@@ -46,7 +46,7 @@ uint32_t st7735_id;
 
 int a = 1;
 
-void LCD_Start(void)
+void LCD_Init(void)
 {
 	ST7735Ctx.Orientation = ST7735_ORIENTATION_LANDSCAPE_ROT180;
 	ST7735Ctx.Panel = HannStar_Panel;
@@ -57,42 +57,29 @@ void LCD_Start(void)
 	ST7735_LCD_Driver.ReadID(&st7735_pObj,&st7735_id);
 
 	LCD_SetBrightness(0);
-
 	extern unsigned char WeActStudiologo_160_80[];
 	ST7735_LCD_Driver.DrawBitmap(&st7735_pObj,0,0,WeActStudiologo_160_80);
-	HAL_Delay(200);
-
+	HAL_Delay(400);
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
+}
 
-//	LCD_Light(100, 200);
-//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 110, 20, 10, 10, 0xFFFF);
-//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 120, 20, 10, 10, 0xF0FF);
-//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 130, 20, 10, 10, 0xF02F);
-//	LCD_Light(0, 300);
-//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 110, 30, 10, 10, 0xFFFF);
-//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 120, 30, 10, 10, 0xF0FF);
-//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 130, 30, 10, 10, 0xF02F);
-//	LCD_Light(100, 200);
-//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 110, 40, 10, 10, 0xFFFF);
-//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 120, 40, 10, 10, 0xF0FF);
-//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 130, 40, 10, 10, 0xF02F);
-//	HAL_Delay(200);
+void LCD_stby(){
+	LCD_Init();
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
+	char texxt[20];
+	sprintf(texxt, "Standby..");
+	LCD_ShowString(6, 40, 150, 19, 16, (uint8_t*)texxt);
+	HAL_Delay(400);
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
+}
 
-//	char texxt[20];
-//	int c = 5;
-//	while (1)
-//	{
-//		a += c;
-//		sprintf(texxt, "%d", a);
-//		LCD_ShowString(a, a / 2 + 20, 40, 40, 16, texxt);
-//		LCD_ShowString(a + 20, a / 2, 40, 40, 16, texxt);
-//		//printf(buff, "1. целое число: %d \n", 1234);
-//		//printf(buff, "2. дробное число: %f \n", 12.34);
-//		//printf(buff, "3. 16-ричное: %X \n", 12.34);
-//		HAL_Delay(15);
-//		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, ST7735Ctx.Width,ST7735Ctx.Height, BLACK);
-//		if(a > 70) return;
-//	}
+void LCD_start(){
+	LCD_Init();
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
+	char texxt[20];
+	sprintf(texxt, "Start..");
+	LCD_ShowString(6, 40, 150, 19, 16, (uint8_t*)texxt);
+	HAL_Delay(400);
 }
 
 void LCD_SetBrightness(uint32_t Brightness)

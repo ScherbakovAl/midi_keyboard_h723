@@ -120,8 +120,11 @@ void Keys::wheel() {
 		for (uint i = 0; i < 29; ++i) {
 			maskLoadMidiOn();
 			gpio.ShLdHi_On();
-			gpio.AndLo_On();
-			gpio.ShLdLo_On();
+
+//			gpio.AndLo_On();
+//			gpio.ShLdLo_On();
+			GPIOA->BSRR |= 0x50000;
+
 			gpio.AndHi_On();
 			gpio.AndHi_On(); // для стабильности
 			mux.toggle();
@@ -129,8 +132,11 @@ void Keys::wheel() {
 			for (uint o = one; o < sizeMux; ++o) {
 				maskLoadMidiOn();
 				gpio.ClkLo_On();
-				gpio.AndLo_On();
-				gpio.ClkHi_On();
+
+//				gpio.AndLo_On();
+//				gpio.ClkHi_On();
+				GPIOA->BSRR |= 0x40002;
+
 				gpio.AndHi_On();
 				mux.toggle();
 			}
@@ -139,8 +145,11 @@ void Keys::wheel() {
 		midiOnOrOff = OnOrOff::midiOff;
 		maskLoadMidiOff();
 		gpio.ShLdHi_Off();
-		gpio.AndOffLo_Off();
-		gpio.ShLdLo_Off();
+
+//		gpio.AndOffLo_Off();
+//		gpio.ShLdLo_Off();
+		GPIOA->BSRR |= 0x90000;
+
 		gpio.AndOffHi_Off();
 		gpio.AndOffHi_Off(); // для стабильности
 		mux.toggle();
@@ -148,8 +157,11 @@ void Keys::wheel() {
 		for (uint p = one; p < sizeMux; ++p) {
 			maskLoadMidiOff();
 			gpio.ClkLo_Off();
+
 			gpio.AndOffLo_Off();
 			gpio.ClkHi_Off();
+//			GPIOA->BSRR |= 0x80002;
+
 			gpio.AndOffHi_Off();
 			mux.toggle();
 		}
@@ -200,6 +212,10 @@ void Keys::check() {
 }
 
 void Keys::interrupt(cuint &channel) {
+//	gpio.Enable_BlueLed(); // for test
+//	dequeLed.push_back(TIM2->CNT); // for test
+//	GPIOA->BSRR |= 0x200; // for test
+//	GPIOA->BSRR |= 0x2000000; // for test
 	autoStandby = 0;
 	numberS nu;
 	nu.set(channel, mux.get());

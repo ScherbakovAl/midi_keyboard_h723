@@ -207,6 +207,9 @@ void Keys::check() {
 		TIM2->CNT = 0;
 	}
 	if (autoStandby > 8'000'000) {
+		if (checkMemory()) {
+			SaveToMemory();
+		}
 		to_sleep();
 	}
 }
@@ -254,7 +257,7 @@ void Keys::timerSave(const numberS &nu) {
 			min = time;
 			printMenu(BLACK);
 		}
-		if (time > max) // for test
+		if (time > max && time < 60000) // for test
 				{
 			max = time;
 			printMenu(BLACK);
@@ -263,13 +266,10 @@ void Keys::timerSave(const numberS &nu) {
 }
 
 void Keys::sendMidi(cuint &nu, cuint &t, const int &ofs, OnOrOff &mO) {
-	cuint midi_speed = divisible / t;	//~480-25000
+	cuint midi_speed = divisible / t;	//~213-14362
 	cuint midi_hi = midi_speed / maxMidi;
 	cuint midi_lo = midi_speed - midi_hi * maxMidi;
 	int m_h_o = ((int) midi_hi) + ofs;
-	if (mO == OnOrOff::midiOn) {
-	}
-
 	if (m_h_o > 127) {
 		m_h_o = 127;
 		gpio.Enable_BlueLed();
@@ -394,6 +394,9 @@ void Keys::displayOperations() {
 							0x3333);
 					printString(40, 35, 80, 20, 16, "SLEEP....");
 					pC = cC;
+					if (checkMemory()) {
+						SaveToMemory();
+					}
 					gpio.Disable_Qre1113();
 					HAL_Delay(500);
 					HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4); //pin4 == кнопка К1 на плате
@@ -415,9 +418,7 @@ void Keys::displayOperations() {
 		}
 	}	//while
 
-	timeToCleanUp = uint(float(divisible) / 1.1f / 127.0f);
-	off_lo = uint(float(divisible) / 1.0f / 127.0f);
-	off_hi = uint(float(divisible) / 60.0f / 127.0f);
+	recalculation();
 	if (checkMemory()) {
 		SaveToMemory();
 	}
@@ -465,6 +466,12 @@ void Keys::to_sleep() {
 	__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
 	HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4);
 	HAL_PWR_EnterSTANDBYMode();
+}
+
+void Keys::recalculation() {
+	timeToCleanUp = uint(float(divisible) / 1.1f / 127.0f);
+	off_lo = uint(float(divisible) / 1.0f / 127.0f);
+	off_hi = uint(float(divisible) / 60.0f / 127.0f);
 }
 
 void Keys::SaveToMemory() {
@@ -516,6 +523,7 @@ void Keys::MemoryRead() {
 		HAL_Delay(800);
 		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
 	}
+	recalculation();
 }
 
 int Keys::checkMemory() {

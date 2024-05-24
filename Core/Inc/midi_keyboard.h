@@ -114,6 +114,7 @@ private:
 	void MemoryRead();
 	int checkMemory();
 	void to_sleep();
+	void recalculation();
 
 	cuint KeyMemoryTest = 123456;
 	cuint Flash_Address = 0x08040000;

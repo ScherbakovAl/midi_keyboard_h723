@@ -228,6 +228,7 @@ void Keys::interrupt(cuint &channel) {
 			sendMidi(nu.number, off_hi, 0, midiOnOrOff);
 			bitsMidiOff[nu.mux + 1].set(channel);
 			bitsMidiOff[nu.mux].reset(channel);
+
 		} else {
 			if (prePressure) {
 				OnOrOff O = OnOrOff::midiOn;
@@ -248,6 +249,16 @@ void Keys::timerSave(const numberS &nu) {
 		timer[nu.number] = Now;
 		sendMidi(nu.number, time, offset, midiOnOrOff);
 		bitsMidiOff[nu.mux - 1].set(nu.cha);
+		if (time < min) // for test
+				{
+			min = time;
+			printMenu(BLACK);
+		}
+		if (time > max) // for test
+				{
+			max = time;
+			printMenu(BLACK);
+		}
 	}
 }
 
@@ -422,6 +433,8 @@ void Keys::printMenu(uint background) {
 	} else {
 		printString(6, 40, 150, 19, 16, "prePressure OFF");
 	}
+	print(6, 60, 60, 19, 16, min); // for test
+	print(60, 60, 60, 19, 16, max); // for test
 }
 
 void Keys::printString(cuint x, cuint y, cuint width, cuint height, cuint size,
@@ -459,6 +472,8 @@ void Keys::SaveToMemory() {
 	Data[1] = divisible;
 	Data[2] = (uint) offset;
 	Data[3] = prePressure;
+	Data[4] = min; // for tet
+	Data[5] = max; // for test
 
 	SCB_DisableICache();
 	SCB_DisableDCache();
@@ -493,6 +508,8 @@ void Keys::MemoryRead() {
 		divisible = DataRead[1];
 		offset = (int) DataRead[2];
 		prePressure = DataRead[3];
+		min = DataRead[4]; // for test
+		max = DataRead[5]; // for test
 
 		ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, 0x4444);
 		printString(40, 10, 120, 20, 16, "Data restored!");
@@ -514,6 +531,12 @@ int Keys::checkMemory() {
 		f = 1;
 	}
 	if (prePressure != DataRead[3]) {
+		f = 1;
+	}
+	if (min != DataRead[4]) { // for test
+		f = 1;
+	}
+	if (max != DataRead[5]) { // for test
 		f = 1;
 	}
 	return f;

@@ -132,6 +132,8 @@ private:
 	uint prePressure = 0;
 	uint amountOfWork = 0;
 	uint autoStandby = 0;
+	uint min = 1000; // for test
+	uint max = 1000; // for test
 
 	muxer mux;
 	gpioBsrr gpio;

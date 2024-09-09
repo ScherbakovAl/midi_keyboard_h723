@@ -99,8 +99,11 @@ void Keys::initBitMask() {
 		bitsMidiOff[s].reset();
 		bitsMidiOff[s + 1].set();
 	}
+	bitsMidiOff[0].reset(0); // ?
 	bitsMidiOff[1].reset(0); //две нижние клавиши без механики
+	bitsMidiOff[2].reset(0);
 	bitsMidiOff[3].reset(0);
+	bitsMidiOff[4].reset(0); // ?
 	HAL_Delay(30);
 }
 
@@ -222,16 +225,15 @@ void Keys::interrupt(cuint &channel) {
 	autoStandby = 0;
 	numberS nu;
 	nu.set(channel, mux.get());
-	if (midiOnOrOff == OnOrOff::midiOn) {
+	if (midiOnOrOff == OnOrOff::midiOn) { // midi ON
 		bitsMidiOn[nu.mux].reset(channel);
 		dequeOn.push_back(nu);
 		timerSave(nu);
-	} else {
+	} else { // midi OFF
 		if (nu.mux % 2 == 0) {
 			sendMidi(nu.number, off_hi, 0, midiOnOrOff);
 			bitsMidiOff[nu.mux + 1].set(channel);
 			bitsMidiOff[nu.mux].reset(channel);
-
 		} else {
 			if (prePressure) {
 				OnOrOff O = OnOrOff::midiOn;
@@ -245,12 +247,16 @@ void Keys::interrupt(cuint &channel) {
 
 void Keys::timerSave(const numberS &nu) {
 	auto Now = TIM2->CNT;
-	if (nu.mux % 2 == 0) {
+	if (nu.mux % 2 == 0) { // первый датчик ON
 		timer[nu.number] = Now;
-	} else {
+	} else { // второй датчик ON
 		auto time = Now - timer[nu.number - 1];
 		timer[nu.number] = Now;
 		sendMidi(nu.number, time, offset, midiOnOrOff);
+		if (nu.number > 137) { // для верхних клавиш без демпферов
+			OnOrOff O = OnOrOff::midiOff;
+			sendMidi(nu.number, off_hi + 11, 0, O);
+		}
 		bitsMidiOff[nu.mux - 1].set(nu.cha);
 		if (time < min) // for test
 				{

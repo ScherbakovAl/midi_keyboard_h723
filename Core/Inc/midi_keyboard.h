@@ -14,6 +14,7 @@
 extern "C" {
 #include "lcd.h"
 }
+#include "mcp4351.h"
 
 extern TIM_HandleTypeDef htim3;
 

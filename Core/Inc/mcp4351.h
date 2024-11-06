@@ -23,3 +23,5 @@ void print(cuint x, cuint y, cuint width, cuint height, cuint size, T value){
 
 void printString(cuint x, cuint y, cuint width, cuint height, cuint size,
 		const std::string value);
+
+void pinMultiplexer(int a);

@@ -16,14 +16,22 @@ void mcp_testing() {
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
 
 	while (1) {
-		print(6, 0, 60, 19, 12, qwe);
+		print(6, 60, 60, 19, 12, qwe);
 		qwe++;
-		print(6, 12, 60, 19, 12, ADSread());
-		HAL_Delay(300);
+
+		for (int i = 0; i < 8; ++i) {
+			pinMultiplexer(i);
+			HAL_Delay(30);
+			print(6, 6 * i + 6, 60, 19, 12, ADSread());
+			++i;
+			pinMultiplexer(i);
+			HAL_Delay(30);
+			print(80, 6 * i, 60, 19, 12, ADSread());
+		}
 	}
 }
 
-float ADSread(){
+float ADSread() {
 	ADSwrite[0] = 0x01;
 	ADSwrite[1] = 0xD1; //C1 - 1, D1 - 2...
 	ADSwrite[2] = 0x83;
@@ -37,4 +45,10 @@ float ADSread(){
 	}
 	return reading * voltageConv;
 
+}
+
+void pinMultiplexer(int a) {
+	(a & (1 << 0)) ? GPIOB->BSRR = 0x2 : GPIOB->BSRR = 0x20000;
+	(a & (1 << 1)) ? GPIOE->BSRR = 0x80 : GPIOE->BSRR = 0x800000;
+	(a & (1 << 2)) ? GPIOE->BSRR = 0x200 : GPIOE->BSRR = 0x2000000;
 }

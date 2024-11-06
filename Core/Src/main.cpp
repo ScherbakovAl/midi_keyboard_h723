@@ -17,6 +17,7 @@
  */
 
 #include "main.h"
+#include "i2c.h"
 #include "spi.h"
 #include "tim.h"
 #include "usb_device.h"
@@ -64,9 +65,11 @@ int main(void) {
 	MX_SPI4_Init();
 	MX_TIM1_Init();
 	MX_TIM3_Init();
-	MX_TIM2_Init();//4294967295
+	MX_TIM2_Init(); //4294967295
 	HAL_TIM_Base_Start(&htim2);
 	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
+	MX_I2C3_Init();
+	MX_SPI2_Init();
 
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv управление питанием
 	if (!__HAL_PWR_GET_FLAG(PWR_FLAG_SB)) {
@@ -81,7 +84,7 @@ int main(void) {
 	}
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ управление питанием
 
-	MX_USB_DEVICE_Init();
+//	MX_USB_DEVICE_Init();
 	HAL_Delay(300);
 	keys.wheel();
 

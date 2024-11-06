@@ -117,6 +117,13 @@ void Keys::wheel() {
 	HAL_Delay(300);
 	printMenu(BLACK);
 
+	int qwe = 0;
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
+	while(1){
+		print(6, 0, 60, 19, 16, qwe);
+		qwe++;
+	}
+
 	while (1) {
 		++autoStandby;
 		midiOnOrOff = OnOrOff::midiOn;

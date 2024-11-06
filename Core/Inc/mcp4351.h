@@ -1,10 +1,12 @@
 #pragma once
+
+#include "stm32h7xx_hal.h"
+#include "i2c.h"
 #include <string>
 
 extern "C" {
 #include "lcd.h"
 }
-#include "stm32h7xx_hal.h"
 
 using uint = unsigned int;
 using cuint = const uint;

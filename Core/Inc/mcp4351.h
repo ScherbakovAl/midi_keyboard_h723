@@ -13,6 +13,8 @@ using cuint = const uint;
 
 void mcp_testing();
 
+float ADSread();
+
 template<typename T>
 void print(cuint x, cuint y, cuint width, cuint height, cuint size, T value){
 	const std::string u = std::to_string(value);

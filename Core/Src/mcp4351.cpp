@@ -12,15 +12,14 @@ float voltage = 0.0f;
 const float voltageConv = 6.144f / 32768.0f;
 
 void mcp_testing() {
-	__disable_irq();
-
 	int qwe = 0;
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
 
 	while (1) {
-		print(6, 0, 60, 19, 16, qwe);
+		print(6, 0, 60, 19, 12, qwe);
 		qwe++;
-		print(6, 25, 60, 19, 16, ADSread());
+		print(6, 12, 60, 19, 12, ADSread());
+		HAL_Delay(300);
 	}
 }
 

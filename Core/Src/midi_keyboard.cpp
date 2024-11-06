@@ -219,6 +219,18 @@ void Keys::check() {
 }
 
 void Keys::interrupt(cuint &channel) {
+	//vvvvvvvvvvvvvvvvvvvvvvv for test ADS
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
+	HAL_Delay(200);
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, RED);
+	HAL_Delay(200);
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
+	HAL_Delay(200);
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, RED);
+	HAL_Delay(200);
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
+	HAL_Delay(200);
+	// ^^^^^^^^^^^^^^^^^^^^ for test ADS
 //	gpio.Enable_BlueLed(); // for test
 //	dequeLed.push_back(TIM2->CNT); // for test
 //	GPIOA->BSRR |= 0x200; // for test

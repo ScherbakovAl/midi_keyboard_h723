@@ -13,25 +13,24 @@ const float voltageConv = 6.144f / 32768.0f;
 
 void mcp_testing() {
 	int qwe = 0;
-	float r = 0;
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 159, 79, BLACK);
+	int x = 1;
+	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 79, 159, BLACK);
+
+	uint8_t spi_data1[2] = {0x01,0x00};
+	HAL_SPI_Transmit(&hspi2, spi_data1, 2, 0xff);
 
 	while (1) {
-		print(6, 60, 60, 19, 12, qwe);
-		HAL_Delay(30);
-		qwe++;
-
-		for (int i = 0; i < 8; ++i) {
-			pinMultiplexer(i);
-			r = ADSread();
-			print(6, 6 * i + 6, 60, 19, 12, r);
-			HAL_Delay(30);
-			++i;
-			pinMultiplexer(i);
-			r = ADSread();
-			print(80, 6 * i, 60, 19, 12, r);
-			HAL_Delay(30);
+		print(20, 140, 30, 8, 12, qwe);
+		pinMultiplexer(x);
+		print(0, x * 12, 10, 12, 12, x);
+		print(20, x * 12, 40, 12, 12, ADSread());
+		if (x < 8) {
+			x++;
+		} else {
+			x = 1;
+			qwe++;
 		}
+		HAL_Delay(30);
 	}
 }
 
@@ -53,8 +52,8 @@ float ADSread() {
 
 void pinMultiplexer(int a) {
 	GPIOC->BSRR = 0x80;
-	(a & (1 << 2)) ? GPIOB->BSRR = 0x2 : GPIOB->BSRR = 0x20000;
-	(a & (1 << 1)) ? GPIOE->BSRR = 0x80 : GPIOE->BSRR = 0x800000;
 	(a & (1 << 0)) ? GPIOE->BSRR = 0x200 : GPIOE->BSRR = 0x2000000;
+	(a & (1 << 1)) ? GPIOE->BSRR = 0x80 : GPIOE->BSRR = 0x800000;
+	(a & (1 << 2)) ? GPIOB->BSRR = 0x2 : GPIOB->BSRR = 0x20000;
 	GPIOC->BSRR = 0x800000;
 }

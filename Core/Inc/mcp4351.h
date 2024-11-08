@@ -26,3 +26,5 @@ void printString(cuint x, cuint y, cuint width, cuint height, cuint size,
 		const std::string value);
 
 void pinMultiplexer(int a);
+
+void setPot(int pot, int value);

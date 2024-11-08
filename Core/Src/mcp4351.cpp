@@ -16,20 +16,18 @@ void mcp_testing() {
 	int x = 1;
 	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 79, 159, BLACK);
 
-	//datasheet pg51 Device commands
-
-	//AAAACCDD (address:Command:top two Data bits)// command 00 = write; 10 = read
+//datasheet pg51 Device commands
+//AAAACCDD (address:Command:top two Data bits)// command 00 = write; 10 = read
 
 //#define POT_3 0b01110000   //wiper 3 is at address 7// datasheet page 40
 //#define POT_2 0b01100000   //wiper 2 is at address 6
-//#define POT_1 0b00010000   // wiper 1 is at address 1
+//#define POT_1 0b00010000   //wiper 1 is at address 1
 //#define POT_0 0b00000000   //wiper 0 is at address 0.
 
 //#define TCON0 0b01000000  //address 0x04
-//#define TCON1 0b10100000 //address 0x0A
+//#define TCON1 0b10100000  //address 0x0A
 
 //write 0b11111111 to TCON0 will connect resistor ends and wiper of first two pots
-
 //write 0b11111111 to TCON1 will connect resistor ends and wiper of next two pots
 
 //SPI protocol for this device requires 16 bit write. First the 8-bit pot address and then the 7 bits of data.
@@ -37,11 +35,10 @@ void mcp_testing() {
 //wirteSPI_16bit(POT0, data)
 
 //Example
-
 //Set up potentiometer
 
-//	WriteSPI_16bit(TCON0, 0b11111111);
-//	WriteSPI_16bit(TCON1, 0b11111111);
+//WriteSPI_16bit(TCON0, 0b11111111);
+//WriteSPI_16bit(TCON1, 0b11111111);
 
 //write data to move wiper
 

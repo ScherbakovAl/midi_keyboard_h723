@@ -42,9 +42,9 @@ void mcp_testing() {
 
 //write data to move wiper
 
-	WriteSPI_16bit(POT_0, data); //data 0 - 127 or 0 - 255 if 8-bit device
+//WriteSPI_16bit(POT_0, data); //data 0 - 127 or 0 - 255 if 8-bit device
 
-	uint8_t spi_data1[2] = { 0x01, 54 };
+	uint8_t spi_data1[2] = { 0x01, 0 };
 	HAL_SPI_Transmit(&hspi2, spi_data1, 2, 0xff);
 
 	while (1) {

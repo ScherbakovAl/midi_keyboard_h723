@@ -2,7 +2,7 @@
 
 void mcp_testing() {
 	int qwe = 0;
-	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 79, 159, BLACK);
+//	ST7735_LCD_Driver.FillRect(&st7735_pObj, 0, 0, 79, 159, BLACK);
 
 	int aa = 0;
 	int bb = 0;
@@ -12,10 +12,10 @@ void mcp_testing() {
 	while (1) {
 		for (int x = 0; x < 8; ++x) {
 			pinMultiplexer(x);
-			print(20, 140, 30, 8, 12, qwe);
-			print(0, x * 12, 10, 12, 12, x);
-			HAL_Delay(30);
-			print(20, x * 12, 20, 12, 12, ADSread());
+//			print(20, 140, 30, 8, 12, qwe);
+//			print(0, x * 12, 10, 12, 12, x);
+//			HAL_Delay(30);
+//			print(20, x * 12, 20, 12, 12, ADSread());
 		}
 		qwe++;
 

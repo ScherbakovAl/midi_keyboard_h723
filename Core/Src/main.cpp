@@ -72,18 +72,18 @@ int main(void) {
 	MX_SPI2_Init();
 
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv управление питанием
-	if (!__HAL_PWR_GET_FLAG(PWR_FLAG_SB)) {
-		LCD_stby();
-		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4); //pin4 == кнопка К1 на плате
-		__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
-		HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4);
-		HAL_PWR_EnterSTANDBYMode();
-	} else {
-		HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);
-		LCD_start();
-	}
+	/*	if (!__HAL_PWR_GET_FLAG(PWR_FLAG_SB)) {
+	 LCD_stby();
+	 HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4); //pin4 == кнопка К1 на плате
+	 __HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+	 HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN4);
+	 HAL_PWR_EnterSTANDBYMode();
+	 } else {
+	 HAL_PWR_DisableWakeUpPin(PWR_WAKEUP_PIN4);
+	 LCD_start();
+	 }
+	 */
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ управление питанием
-
 //	MX_USB_DEVICE_Init();
 	HAL_Delay(300);
 	keys.wheel();

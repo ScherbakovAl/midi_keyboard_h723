@@ -79,12 +79,12 @@ void Error_Handler(void);
 #define Encoder_ch2_GPIO_Port GPIOA
 #define Encoder_ch0_Pin GPIO_PIN_4
 #define Encoder_ch0_GPIO_Port GPIOC
-#define Multiplexer_0_Pin GPIO_PIN_1
-#define Multiplexer_0_GPIO_Port GPIOB
-#define Multiplexer_1_Pin GPIO_PIN_7
-#define Multiplexer_1_GPIO_Port GPIOE
-#define Multiplexer_2_Pin GPIO_PIN_9
-#define Multiplexer_2_GPIO_Port GPIOE
+#define test_out0_Pin GPIO_PIN_1
+#define test_out0_GPIO_Port GPIOB
+#define test_out1_Pin GPIO_PIN_7
+#define test_out1_GPIO_Port GPIOE
+#define test_out2_Pin GPIO_PIN_9
+#define test_out2_GPIO_Port GPIOE
 #define LCD_TIM_Pin GPIO_PIN_10
 #define LCD_TIM_GPIO_Port GPIOE
 #define LCD_CS_Pin GPIO_PIN_11
@@ -108,12 +108,10 @@ void Error_Handler(void);
 #define in10_Pin GPIO_PIN_10
 #define in10_GPIO_Port GPIOD
 #define in10_EXTI_IRQn EXTI15_10_IRQn
-#define Multiplexer_On_Off_Pin GPIO_PIN_7
-#define Multiplexer_On_Off_GPIO_Port GPIOC
-#define ADC_SDA_Pin GPIO_PIN_9
-#define ADC_SDA_GPIO_Port GPIOC
-#define ADC_SCL_Pin GPIO_PIN_8
-#define ADC_SCL_GPIO_Port GPIOA
+#define DIPOT_0_Pin GPIO_PIN_7
+#define DIPOT_0_GPIO_Port GPIOC
+#define DIPOT_1_Pin GPIO_PIN_9
+#define DIPOT_1_GPIO_Port GPIOC
 #define USB_HS_DM_Pin GPIO_PIN_11
 #define USB_HS_DM_GPIO_Port GPIOA
 #define USB_HS_DP_Pin GPIO_PIN_12
@@ -146,6 +144,12 @@ void Error_Handler(void);
 #define in7_Pin GPIO_PIN_7
 #define in7_GPIO_Port GPIOD
 #define in7_EXTI_IRQn EXTI9_5_IRQn
+#define multiplexer_A0_Pin GPIO_PIN_3
+#define multiplexer_A0_GPIO_Port GPIOB
+#define multiplexer_A1_Pin GPIO_PIN_5
+#define multiplexer_A1_GPIO_Port GPIOB
+#define multiplexer_A2_Pin GPIO_PIN_7
+#define multiplexer_A2_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

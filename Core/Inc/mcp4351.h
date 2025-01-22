@@ -1,7 +1,6 @@
 #pragma once
 
 #include "stm32h7xx_hal.h"
-#include "i2c.h"
 #include "spi.h"
 #include <string>
 

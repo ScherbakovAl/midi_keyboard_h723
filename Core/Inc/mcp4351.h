@@ -11,19 +11,14 @@ extern "C" {
 using uint = unsigned int;
 using cuint = const uint;
 
-void mcp_testing();
+void hc238_testing();
 
-float ADSread();
+void Multiplexer_Pin(int p);
 
-template<typename T>
-void print(cuint x, cuint y, cuint width, cuint height, cuint size, T value){
-	const std::string u = std::to_string(value);
-	LCD_ShowString(x, y, width, height, size, (int8_t*) u.c_str());
-}
+void enable_Dipot_0();
+void enable_Dipot_1();
 
-void printString(cuint x, cuint y, cuint width, cuint height, cuint size,
-		const std::string value);
-
-void pinMultiplexer(int a);
-
-void setPot(int pot, int value);
+void set_Pot_pin_0(int value);
+void set_Pot_pin_1(int value);
+void set_Pot_pin_2(int value);
+void set_Pot_pin_3(int value);

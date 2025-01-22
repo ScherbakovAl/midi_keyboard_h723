@@ -108,7 +108,7 @@ void Keys::initBitMask() {
 }
 
 void Keys::wheel() {
-	mcp_testing();
+	hc238_testing();
 	gpio.AndOffHi_Off(); // чтобы не грелись микрухи управляющие "off" ??
 	initBitMask();
 	mux.setSizeMux(sizeM);

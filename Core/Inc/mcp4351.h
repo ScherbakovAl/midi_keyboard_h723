@@ -22,3 +22,7 @@ void set_Pot_pin_0(int value);
 void set_Pot_pin_1(int value);
 void set_Pot_pin_2(int value);
 void set_Pot_pin_3(int value);
+
+void toggle_pB1();
+void toggle_pE7();
+void toggle_pE9();

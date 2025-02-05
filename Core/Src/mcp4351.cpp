@@ -25,7 +25,7 @@ void hc238_testing() {
 //		enable_Dipot_1();
 
 		while (1) {
-			toggle_pB1();
+//			toggle_pB1();
 
 //			++x;
 //			if(x == 30000){
@@ -34,46 +34,80 @@ void hc238_testing() {
 //			x = 0;
 //			}
 
+//			on_pE9();
 			Multiplexer_Pin(0);
+//			off_pE9();
+//			HAL_Delay(1);
 			toggle_pE7();
 			toggle_pE9();
-			toggle_pE7();
-			toggle_pE9();
+//			toggle_pE7();
+//			toggle_pE9();
+
+//			on_pE9();
 			Multiplexer_Pin(1);
+//			off_pE9();
+//			HAL_Delay(1);
 			toggle_pE7();
 			toggle_pE9();
-			toggle_pE7();
-			toggle_pE9();
+//			toggle_pE7();
+//			toggle_pE9();
+
+//			on_pE9();
 			Multiplexer_Pin(2);
+//			off_pE9();
+//			HAL_Delay(1);
 			toggle_pE7();
 			toggle_pE9();
-			toggle_pE7();
-			toggle_pE9();
+//			toggle_pE7();
+//			toggle_pE9();
+
+//			on_pE9();
 			Multiplexer_Pin(3);
+//			off_pE9();
+//			HAL_Delay(1);
 			toggle_pE7();
 			toggle_pE9();
-			toggle_pE7();
-			toggle_pE9();
+//			toggle_pE7();
+//			toggle_pE9();
+//			toggle_pB1();
+
+			toggle_pB1();
+
+//			on_pE9();
 			Multiplexer_Pin(4);
+//			off_pE9();
+//			HAL_Delay(1);
 			toggle_pE7();
 			toggle_pE9();
-			toggle_pE7();
-			toggle_pE9();
+//			toggle_pE7();
+//			toggle_pE9();
+
+//			on_pE9();
 			Multiplexer_Pin(5);
+//			off_pE9();
+//			HAL_Delay(1);
 			toggle_pE7();
 			toggle_pE9();
-			toggle_pE7();
-			toggle_pE9();
+//			toggle_pE7();
+//			toggle_pE9();
+
+//			on_pE9();
 			Multiplexer_Pin(6);
+//			off_pE9();
+//			HAL_Delay(1);
 			toggle_pE7();
 			toggle_pE9();
-			toggle_pE7();
-			toggle_pE9();
+//			toggle_pE7();
+//			toggle_pE9();
+
+//			on_pE9();
 			Multiplexer_Pin(7);
+//			off_pE9();
+//			HAL_Delay(1);
 			toggle_pE7();
 			toggle_pE9();
-			toggle_pE7();
-			toggle_pE9();
+//			toggle_pE7();
+//			toggle_pE9();
 		}
 	}
 }
@@ -132,5 +166,13 @@ void toggle_pE7() {
 }
 void toggle_pE9() {
 	GPIOE->BSRR = 0x200;
+	GPIOE->BSRR = 0x2000000;
+}
+
+void on_pE9(){
+	GPIOE->BSRR = 0x200;
+}
+
+void off_pE9(){
 	GPIOE->BSRR = 0x2000000;
 }

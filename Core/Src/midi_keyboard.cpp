@@ -258,7 +258,7 @@ void Keys::timerSave(const numberS &nu) {
 			sendMidi(nu.number, off_hi + 11, 0, O);
 		}
 		bitsMidiOff[nu.mux - 1].set(nu.cha);
-		if (time < min) // for test
+		if (time < min && time > 2) // for test
 				{
 			min = time;
 			printMenu(BLACK);

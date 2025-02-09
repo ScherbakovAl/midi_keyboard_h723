@@ -116,7 +116,7 @@ private:
 	void to_sleep();
 	void recalculation();
 
-	cuint KeyMemoryTest = 123456;
+	cuint KeyMemoryTest = 123456; // если поменять, то данные перезапишутся
 	cuint Flash_Address = 0x08040000;
 	volatile uint Data[8] = { };
 	uint DataRead[8] = { };
@@ -125,16 +125,16 @@ private:
 	static cuint sizeMux = 16;
 	cuint sizeM = sizeMux;
 	cuint maxMidi = 127;
-	uint divisible = 7'900'000;
+	uint divisible = 10'000'000; // на экране
 	uint timeToCleanUp = uint(float(divisible) / 1.1f / 127.0f);
 	uint off_lo = uint(float(divisible) / 1.0f / 127.0f);
 	uint off_hi = uint(float(divisible) / 60.0f / 127.0f);
-	int offset = -4;
-	uint prePressure = 0;
+	int offset = -7; // на экране
+	uint prePressure = 1; // на экране
 	uint amountOfWork = 0;
 	uint autoStandby = 0;
-	uint min = 1000; // for test
-	uint max = 1000; // for test
+	uint min = 1000;  // на экране // for test =   478? 245?
+	uint max = 1001;  // на экране // for test = 48394
 
 	muxer mux;
 	gpioBsrr gpio;

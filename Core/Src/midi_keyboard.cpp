@@ -108,6 +108,28 @@ void Keys::initBitMask() {
 }
 
 void Keys::wheel() {
+	dequeNotes.push_back( { 54, 32, 62, OnOrOff::midiOn });
+
+
+
+while(1){
+	GPIOC->BSRR = 0x200; // pC9
+	GPIOC->BSRR = 0x2000000; // pC9
+	if(TIM2->CNT > 1000000){
+	GPIOC->BSRR = 0x80; // pC7
+	TIM2->CNT = 0;
+	MidiSender(dequeNotes, bufNotes);
+	GPIOC->BSRR = 0x800000; // pC7
+	}
+
+}
+
+
+
+
+
+
+
 	hc238_testing();
 	gpio.AndOffHi_Off(); // чтобы не грелись микрухи управляющие "off" ??
 	initBitMask();

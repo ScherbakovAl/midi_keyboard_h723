@@ -82,7 +82,7 @@ int main(void) {
 	 }
 	 */
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ управление питанием
-//	MX_USB_DEVICE_Init();
+	MX_USB_DEVICE_Init();
 	HAL_Delay(300);
 	keys.wheel();
 

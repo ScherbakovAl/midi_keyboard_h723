@@ -52,7 +52,7 @@ void MidiSender(std::deque<Note> &deqNote, uint8_t *buf) {
 
 			s += 8;
 		}
-		deqNote.clear();
+//		deqNote.clear();
 		USBD_CDC_SetTxBuffer(&hUsbDeviceHS, buf, i);
 		USBD_CDC_TransmitPacket(&hUsbDeviceHS);
 	}

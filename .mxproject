@@ -41,3 +41,6 @@ SourcePath#1=../USB_DEVICE/App
 SourcePath#2=../USB_DEVICE/Target
 SourceFiles=;
 
+[]
+SourceFiles=;;
+
